@@ -1,0 +1,5 @@
+.idea
+.nova
+build
+go.work
+go.work.sum

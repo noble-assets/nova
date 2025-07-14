@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package nova.v1;
+
+option go_package = "github.com/noble-assets/nova/types";
