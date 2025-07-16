@@ -2,7 +2,16 @@ syntax = "proto3";
 
 package nova.v1;
 
+import "gogoproto/gogo.proto";
+import "nova/v1/nova.proto";
+
 option go_package = "github.com/noble-assets/nova/types";
 
 // GenesisState defines the genesis state of the Nova module.
-message GenesisState {}
+message GenesisState {
+  Config config = 1 [(gogoproto.nullable) = false];
+  Epoch current_epoch = 2;
+  map<uint64, Epoch> epochs = 3 [(gogoproto.nullable) = false];
+  map<uint64, string> state_roots = 4;
+  string mailbox_root = 5;
+}

@@ -4,21 +4,205 @@ package novav1
 import (
 	fmt "fmt"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	io "io"
 	reflect "reflect"
+	sort "sort"
 	sync "sync"
 )
 
+var _ protoreflect.Map = (*_GenesisState_3_map)(nil)
+
+type _GenesisState_3_map struct {
+	m *map[uint64]*Epoch
+}
+
+func (x *_GenesisState_3_map) Len() int {
+	if x.m == nil {
+		return 0
+	}
+	return len(*x.m)
+}
+
+func (x *_GenesisState_3_map) Range(f func(protoreflect.MapKey, protoreflect.Value) bool) {
+	if x.m == nil {
+		return
+	}
+	for k, v := range *x.m {
+		mapKey := (protoreflect.MapKey)(protoreflect.ValueOfUint64(k))
+		mapValue := protoreflect.ValueOfMessage(v.ProtoReflect())
+		if !f(mapKey, mapValue) {
+			break
+		}
+	}
+}
+
+func (x *_GenesisState_3_map) Has(key protoreflect.MapKey) bool {
+	if x.m == nil {
+		return false
+	}
+	keyUnwrapped := key.Uint()
+	concreteValue := keyUnwrapped
+	_, ok := (*x.m)[concreteValue]
+	return ok
+}
+
+func (x *_GenesisState_3_map) Clear(key protoreflect.MapKey) {
+	if x.m == nil {
+		return
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	delete(*x.m, concreteKey)
+}
+
+func (x *_GenesisState_3_map) Get(key protoreflect.MapKey) protoreflect.Value {
+	if x.m == nil {
+		return protoreflect.Value{}
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	v, ok := (*x.m)[concreteKey]
+	if !ok {
+		return protoreflect.Value{}
+	}
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_3_map) Set(key protoreflect.MapKey, value protoreflect.Value) {
+	if !key.IsValid() || !value.IsValid() {
+		panic("invalid key or value provided")
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*Epoch)
+	(*x.m)[concreteKey] = concreteValue
+}
+
+func (x *_GenesisState_3_map) Mutable(key protoreflect.MapKey) protoreflect.Value {
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	v, ok := (*x.m)[concreteKey]
+	if ok {
+		return protoreflect.ValueOfMessage(v.ProtoReflect())
+	}
+	newValue := new(Epoch)
+	(*x.m)[concreteKey] = newValue
+	return protoreflect.ValueOfMessage(newValue.ProtoReflect())
+}
+
+func (x *_GenesisState_3_map) NewValue() protoreflect.Value {
+	v := new(Epoch)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_3_map) IsValid() bool {
+	return x.m != nil
+}
+
+var _ protoreflect.Map = (*_GenesisState_4_map)(nil)
+
+type _GenesisState_4_map struct {
+	m *map[uint64]string
+}
+
+func (x *_GenesisState_4_map) Len() int {
+	if x.m == nil {
+		return 0
+	}
+	return len(*x.m)
+}
+
+func (x *_GenesisState_4_map) Range(f func(protoreflect.MapKey, protoreflect.Value) bool) {
+	if x.m == nil {
+		return
+	}
+	for k, v := range *x.m {
+		mapKey := (protoreflect.MapKey)(protoreflect.ValueOfUint64(k))
+		mapValue := protoreflect.ValueOfString(v)
+		if !f(mapKey, mapValue) {
+			break
+		}
+	}
+}
+
+func (x *_GenesisState_4_map) Has(key protoreflect.MapKey) bool {
+	if x.m == nil {
+		return false
+	}
+	keyUnwrapped := key.Uint()
+	concreteValue := keyUnwrapped
+	_, ok := (*x.m)[concreteValue]
+	return ok
+}
+
+func (x *_GenesisState_4_map) Clear(key protoreflect.MapKey) {
+	if x.m == nil {
+		return
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	delete(*x.m, concreteKey)
+}
+
+func (x *_GenesisState_4_map) Get(key protoreflect.MapKey) protoreflect.Value {
+	if x.m == nil {
+		return protoreflect.Value{}
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	v, ok := (*x.m)[concreteKey]
+	if !ok {
+		return protoreflect.Value{}
+	}
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_GenesisState_4_map) Set(key protoreflect.MapKey, value protoreflect.Value) {
+	if !key.IsValid() || !value.IsValid() {
+		panic("invalid key or value provided")
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	(*x.m)[concreteKey] = concreteValue
+}
+
+func (x *_GenesisState_4_map) Mutable(key protoreflect.MapKey) protoreflect.Value {
+	panic("should not call Mutable on protoreflect.Map whose value is not of type protoreflect.Message")
+}
+
+func (x *_GenesisState_4_map) NewValue() protoreflect.Value {
+	v := ""
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_GenesisState_4_map) IsValid() bool {
+	return x.m != nil
+}
+
 var (
-	md_GenesisState protoreflect.MessageDescriptor
+	md_GenesisState               protoreflect.MessageDescriptor
+	fd_GenesisState_config        protoreflect.FieldDescriptor
+	fd_GenesisState_current_epoch protoreflect.FieldDescriptor
+	fd_GenesisState_epochs        protoreflect.FieldDescriptor
+	fd_GenesisState_state_roots   protoreflect.FieldDescriptor
+	fd_GenesisState_mailbox_root  protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_nova_v1_genesis_proto_init()
 	md_GenesisState = File_nova_v1_genesis_proto.Messages().ByName("GenesisState")
+	fd_GenesisState_config = md_GenesisState.Fields().ByName("config")
+	fd_GenesisState_current_epoch = md_GenesisState.Fields().ByName("current_epoch")
+	fd_GenesisState_epochs = md_GenesisState.Fields().ByName("epochs")
+	fd_GenesisState_state_roots = md_GenesisState.Fields().ByName("state_roots")
+	fd_GenesisState_mailbox_root = md_GenesisState.Fields().ByName("mailbox_root")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -86,6 +270,36 @@ func (x *fastReflection_GenesisState) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Config != nil {
+		value := protoreflect.ValueOfMessage(x.Config.ProtoReflect())
+		if !f(fd_GenesisState_config, value) {
+			return
+		}
+	}
+	if x.CurrentEpoch != nil {
+		value := protoreflect.ValueOfMessage(x.CurrentEpoch.ProtoReflect())
+		if !f(fd_GenesisState_current_epoch, value) {
+			return
+		}
+	}
+	if len(x.Epochs) != 0 {
+		value := protoreflect.ValueOfMap(&_GenesisState_3_map{m: &x.Epochs})
+		if !f(fd_GenesisState_epochs, value) {
+			return
+		}
+	}
+	if len(x.StateRoots) != 0 {
+		value := protoreflect.ValueOfMap(&_GenesisState_4_map{m: &x.StateRoots})
+		if !f(fd_GenesisState_state_roots, value) {
+			return
+		}
+	}
+	if x.MailboxRoot != "" {
+		value := protoreflect.ValueOfString(x.MailboxRoot)
+		if !f(fd_GenesisState_mailbox_root, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -101,6 +315,16 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.config":
+		return x.Config != nil
+	case "nova.v1.GenesisState.current_epoch":
+		return x.CurrentEpoch != nil
+	case "nova.v1.GenesisState.epochs":
+		return len(x.Epochs) != 0
+	case "nova.v1.GenesisState.state_roots":
+		return len(x.StateRoots) != 0
+	case "nova.v1.GenesisState.mailbox_root":
+		return x.MailboxRoot != ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -117,6 +341,16 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.config":
+		x.Config = nil
+	case "nova.v1.GenesisState.current_epoch":
+		x.CurrentEpoch = nil
+	case "nova.v1.GenesisState.epochs":
+		x.Epochs = nil
+	case "nova.v1.GenesisState.state_roots":
+		x.StateRoots = nil
+	case "nova.v1.GenesisState.mailbox_root":
+		x.MailboxRoot = ""
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -133,6 +367,27 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
+	case "nova.v1.GenesisState.config":
+		value := x.Config
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "nova.v1.GenesisState.current_epoch":
+		value := x.CurrentEpoch
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "nova.v1.GenesisState.epochs":
+		if len(x.Epochs) == 0 {
+			return protoreflect.ValueOfMap(&_GenesisState_3_map{})
+		}
+		mapValue := &_GenesisState_3_map{m: &x.Epochs}
+		return protoreflect.ValueOfMap(mapValue)
+	case "nova.v1.GenesisState.state_roots":
+		if len(x.StateRoots) == 0 {
+			return protoreflect.ValueOfMap(&_GenesisState_4_map{})
+		}
+		mapValue := &_GenesisState_4_map{m: &x.StateRoots}
+		return protoreflect.ValueOfMap(mapValue)
+	case "nova.v1.GenesisState.mailbox_root":
+		value := x.MailboxRoot
+		return protoreflect.ValueOfString(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -153,6 +408,20 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.config":
+		x.Config = value.Message().Interface().(*Config)
+	case "nova.v1.GenesisState.current_epoch":
+		x.CurrentEpoch = value.Message().Interface().(*Epoch)
+	case "nova.v1.GenesisState.epochs":
+		mv := value.Map()
+		cmv := mv.(*_GenesisState_3_map)
+		x.Epochs = *cmv.m
+	case "nova.v1.GenesisState.state_roots":
+		mv := value.Map()
+		cmv := mv.(*_GenesisState_4_map)
+		x.StateRoots = *cmv.m
+	case "nova.v1.GenesisState.mailbox_root":
+		x.MailboxRoot = value.Interface().(string)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -173,6 +442,30 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.config":
+		if x.Config == nil {
+			x.Config = new(Config)
+		}
+		return protoreflect.ValueOfMessage(x.Config.ProtoReflect())
+	case "nova.v1.GenesisState.current_epoch":
+		if x.CurrentEpoch == nil {
+			x.CurrentEpoch = new(Epoch)
+		}
+		return protoreflect.ValueOfMessage(x.CurrentEpoch.ProtoReflect())
+	case "nova.v1.GenesisState.epochs":
+		if x.Epochs == nil {
+			x.Epochs = make(map[uint64]*Epoch)
+		}
+		value := &_GenesisState_3_map{m: &x.Epochs}
+		return protoreflect.ValueOfMap(value)
+	case "nova.v1.GenesisState.state_roots":
+		if x.StateRoots == nil {
+			x.StateRoots = make(map[uint64]string)
+		}
+		value := &_GenesisState_4_map{m: &x.StateRoots}
+		return protoreflect.ValueOfMap(value)
+	case "nova.v1.GenesisState.mailbox_root":
+		panic(fmt.Errorf("field mailbox_root of message nova.v1.GenesisState is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -186,6 +479,20 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.config":
+		m := new(Config)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "nova.v1.GenesisState.current_epoch":
+		m := new(Epoch)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "nova.v1.GenesisState.epochs":
+		m := make(map[uint64]*Epoch)
+		return protoreflect.ValueOfMap(&_GenesisState_3_map{m: &m})
+	case "nova.v1.GenesisState.state_roots":
+		m := make(map[uint64]string)
+		return protoreflect.ValueOfMap(&_GenesisState_4_map{m: &m})
+	case "nova.v1.GenesisState.mailbox_root":
+		return protoreflect.ValueOfString("")
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -255,6 +562,69 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
+		if x.Config != nil {
+			l = options.Size(x.Config)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.CurrentEpoch != nil {
+			l = options.Size(x.CurrentEpoch)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if len(x.Epochs) > 0 {
+			SiZeMaP := func(k uint64, v *Epoch) {
+				l := 0
+				if v != nil {
+					l = options.Size(v)
+				}
+				l += 1 + runtime.Sov(uint64(l))
+				mapEntrySize := 1 + runtime.Sov(uint64(k)) + l
+				n += mapEntrySize + 1 + runtime.Sov(uint64(mapEntrySize))
+			}
+			if options.Deterministic {
+				sortme := make([]uint64, 0, len(x.Epochs))
+				for k := range x.Epochs {
+					sortme = append(sortme, k)
+				}
+				sort.Slice(sortme, func(i, j int) bool {
+					return sortme[i] < sortme[j]
+				})
+				for _, k := range sortme {
+					v := x.Epochs[k]
+					SiZeMaP(k, v)
+				}
+			} else {
+				for k, v := range x.Epochs {
+					SiZeMaP(k, v)
+				}
+			}
+		}
+		if len(x.StateRoots) > 0 {
+			SiZeMaP := func(k uint64, v string) {
+				mapEntrySize := 1 + runtime.Sov(uint64(k)) + 1 + len(v) + runtime.Sov(uint64(len(v)))
+				n += mapEntrySize + 1 + runtime.Sov(uint64(mapEntrySize))
+			}
+			if options.Deterministic {
+				sortme := make([]uint64, 0, len(x.StateRoots))
+				for k := range x.StateRoots {
+					sortme = append(sortme, k)
+				}
+				sort.Slice(sortme, func(i, j int) bool {
+					return sortme[i] < sortme[j]
+				})
+				for _, k := range sortme {
+					v := x.StateRoots[k]
+					SiZeMaP(k, v)
+				}
+			} else {
+				for k, v := range x.StateRoots {
+					SiZeMaP(k, v)
+				}
+			}
+		}
+		l = len(x.MailboxRoot)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -283,6 +653,130 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.MailboxRoot) > 0 {
+			i -= len(x.MailboxRoot)
+			copy(dAtA[i:], x.MailboxRoot)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MailboxRoot)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if len(x.StateRoots) > 0 {
+			MaRsHaLmAp := func(k uint64, v string) (protoiface.MarshalOutput, error) {
+				baseI := i
+				i -= len(v)
+				copy(dAtA[i:], v)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(v)))
+				i--
+				dAtA[i] = 0x12
+				i = runtime.EncodeVarint(dAtA, i, uint64(k))
+				i--
+				dAtA[i] = 0x8
+				i = runtime.EncodeVarint(dAtA, i, uint64(baseI-i))
+				i--
+				dAtA[i] = 0x22
+				return protoiface.MarshalOutput{}, nil
+			}
+			if options.Deterministic {
+				keysForStateRoots := make([]uint64, 0, len(x.StateRoots))
+				for k := range x.StateRoots {
+					keysForStateRoots = append(keysForStateRoots, uint64(k))
+				}
+				sort.Slice(keysForStateRoots, func(i, j int) bool {
+					return keysForStateRoots[i] < keysForStateRoots[j]
+				})
+				for iNdEx := len(keysForStateRoots) - 1; iNdEx >= 0; iNdEx-- {
+					v := x.StateRoots[uint64(keysForStateRoots[iNdEx])]
+					out, err := MaRsHaLmAp(keysForStateRoots[iNdEx], v)
+					if err != nil {
+						return out, err
+					}
+				}
+			} else {
+				for k := range x.StateRoots {
+					v := x.StateRoots[k]
+					out, err := MaRsHaLmAp(k, v)
+					if err != nil {
+						return out, err
+					}
+				}
+			}
+		}
+		if len(x.Epochs) > 0 {
+			MaRsHaLmAp := func(k uint64, v *Epoch) (protoiface.MarshalOutput, error) {
+				baseI := i
+				encoded, err := options.Marshal(v)
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x12
+				i = runtime.EncodeVarint(dAtA, i, uint64(k))
+				i--
+				dAtA[i] = 0x8
+				i = runtime.EncodeVarint(dAtA, i, uint64(baseI-i))
+				i--
+				dAtA[i] = 0x1a
+				return protoiface.MarshalOutput{}, nil
+			}
+			if options.Deterministic {
+				keysForEpochs := make([]uint64, 0, len(x.Epochs))
+				for k := range x.Epochs {
+					keysForEpochs = append(keysForEpochs, uint64(k))
+				}
+				sort.Slice(keysForEpochs, func(i, j int) bool {
+					return keysForEpochs[i] < keysForEpochs[j]
+				})
+				for iNdEx := len(keysForEpochs) - 1; iNdEx >= 0; iNdEx-- {
+					v := x.Epochs[uint64(keysForEpochs[iNdEx])]
+					out, err := MaRsHaLmAp(keysForEpochs[iNdEx], v)
+					if err != nil {
+						return out, err
+					}
+				}
+			} else {
+				for k := range x.Epochs {
+					v := x.Epochs[k]
+					out, err := MaRsHaLmAp(k, v)
+					if err != nil {
+						return out, err
+					}
+				}
+			}
+		}
+		if x.CurrentEpoch != nil {
+			encoded, err := options.Marshal(x.CurrentEpoch)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.Config != nil {
+			encoded, err := options.Marshal(x.Config)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0xa
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -333,6 +827,338 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: GenesisState: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Config", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Config == nil {
+					x.Config = &Config{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Config); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field CurrentEpoch", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.CurrentEpoch == nil {
+					x.CurrentEpoch = &Epoch{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.CurrentEpoch); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Epochs", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Epochs == nil {
+					x.Epochs = make(map[uint64]*Epoch)
+				}
+				var mapkey uint64
+				var mapvalue *Epoch
+				for iNdEx < postIndex {
+					entryPreIndex := iNdEx
+					var wire uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+						}
+						if iNdEx >= l {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						wire |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					fieldNum := int32(wire >> 3)
+					if fieldNum == 1 {
+						for shift := uint(0); ; shift += 7 {
+							if shift >= 64 {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+							}
+							if iNdEx >= l {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+							}
+							b := dAtA[iNdEx]
+							iNdEx++
+							mapkey |= uint64(b&0x7F) << shift
+							if b < 0x80 {
+								break
+							}
+						}
+					} else if fieldNum == 2 {
+						var mapmsglen int
+						for shift := uint(0); ; shift += 7 {
+							if shift >= 64 {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+							}
+							if iNdEx >= l {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+							}
+							b := dAtA[iNdEx]
+							iNdEx++
+							mapmsglen |= int(b&0x7F) << shift
+							if b < 0x80 {
+								break
+							}
+						}
+						if mapmsglen < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						postmsgIndex := iNdEx + mapmsglen
+						if postmsgIndex < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						if postmsgIndex > l {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						mapvalue = &Epoch{}
+						if err := options.Unmarshal(dAtA[iNdEx:postmsgIndex], mapvalue); err != nil {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+						}
+						iNdEx = postmsgIndex
+					} else {
+						iNdEx = entryPreIndex
+						skippy, err := runtime.Skip(dAtA[iNdEx:])
+						if err != nil {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+						}
+						if (skippy < 0) || (iNdEx+skippy) < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						if (iNdEx + skippy) > postIndex {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						iNdEx += skippy
+					}
+				}
+				x.Epochs[mapkey] = mapvalue
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field StateRoots", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.StateRoots == nil {
+					x.StateRoots = make(map[uint64]string)
+				}
+				var mapkey uint64
+				var mapvalue string
+				for iNdEx < postIndex {
+					entryPreIndex := iNdEx
+					var wire uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+						}
+						if iNdEx >= l {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						wire |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					fieldNum := int32(wire >> 3)
+					if fieldNum == 1 {
+						for shift := uint(0); ; shift += 7 {
+							if shift >= 64 {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+							}
+							if iNdEx >= l {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+							}
+							b := dAtA[iNdEx]
+							iNdEx++
+							mapkey |= uint64(b&0x7F) << shift
+							if b < 0x80 {
+								break
+							}
+						}
+					} else if fieldNum == 2 {
+						var stringLenmapvalue uint64
+						for shift := uint(0); ; shift += 7 {
+							if shift >= 64 {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+							}
+							if iNdEx >= l {
+								return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+							}
+							b := dAtA[iNdEx]
+							iNdEx++
+							stringLenmapvalue |= uint64(b&0x7F) << shift
+							if b < 0x80 {
+								break
+							}
+						}
+						intStringLenmapvalue := int(stringLenmapvalue)
+						if intStringLenmapvalue < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+						if postStringIndexmapvalue < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						if postStringIndexmapvalue > l {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+						iNdEx = postStringIndexmapvalue
+					} else {
+						iNdEx = entryPreIndex
+						skippy, err := runtime.Skip(dAtA[iNdEx:])
+						if err != nil {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+						}
+						if (skippy < 0) || (iNdEx+skippy) < 0 {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+						}
+						if (iNdEx + skippy) > postIndex {
+							return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+						}
+						iNdEx += skippy
+					}
+				}
+				x.StateRoots[mapkey] = mapvalue
+				iNdEx = postIndex
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MailboxRoot", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MailboxRoot = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -386,6 +1212,12 @@ type GenesisState struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Config       *Config           `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
+	CurrentEpoch *Epoch            `protobuf:"bytes,2,opt,name=current_epoch,json=currentEpoch,proto3" json:"current_epoch,omitempty"`
+	Epochs       map[uint64]*Epoch `protobuf:"bytes,3,rep,name=epochs,proto3" json:"epochs,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	StateRoots   map[uint64]string `protobuf:"bytes,4,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	MailboxRoot  string            `protobuf:"bytes,5,opt,name=mailbox_root,json=mailboxRoot,proto3" json:"mailbox_root,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -408,22 +1240,85 @@ func (*GenesisState) Descriptor() ([]byte, []int) {
 	return file_nova_v1_genesis_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *GenesisState) GetConfig() *Config {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+func (x *GenesisState) GetCurrentEpoch() *Epoch {
+	if x != nil {
+		return x.CurrentEpoch
+	}
+	return nil
+}
+
+func (x *GenesisState) GetEpochs() map[uint64]*Epoch {
+	if x != nil {
+		return x.Epochs
+	}
+	return nil
+}
+
+func (x *GenesisState) GetStateRoots() map[uint64]string {
+	if x != nil {
+		return x.StateRoots
+	}
+	return nil
+}
+
+func (x *GenesisState) GetMailboxRoot() string {
+	if x != nil {
+		return x.MailboxRoot
+	}
+	return ""
+}
+
 var File_nova_v1_genesis_proto protoreflect.FileDescriptor
 
 var file_nova_v1_genesis_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69,
 	0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x07, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31,
-	0x22, 0x0e, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65,
-	0x42, 0x89, 0x01, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31,
-	0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01,
-	0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x6f, 0x62,
-	0x6c, 0x65, 0x2d, 0x61, 0x73, 0x73, 0x65, 0x74, 0x73, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x61,
-	0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x3b, 0x6e, 0x6f, 0x76, 0x61, 0x76,
-	0x31, 0xa2, 0x02, 0x03, 0x4e, 0x58, 0x58, 0xaa, 0x02, 0x07, 0x4e, 0x6f, 0x76, 0x61, 0x2e, 0x56,
-	0x31, 0xca, 0x02, 0x07, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x13, 0x4e, 0x6f,
-	0x76, 0x61, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74,
-	0x61, 0xea, 0x02, 0x08, 0x4e, 0x6f, 0x76, 0x61, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x12, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x2f,
+	0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xa8, 0x03, 0x0a, 0x0c, 0x47,
+	0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x2d, 0x0a, 0x06, 0x63,
+	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x6e, 0x6f,
+	0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x42, 0x04, 0xc8, 0xde,
+	0x1f, 0x00, 0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x33, 0x0a, 0x0d, 0x63, 0x75,
+	0x72, 0x72, 0x65, 0x6e, 0x74, 0x5f, 0x65, 0x70, 0x6f, 0x63, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x0e, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63,
+	0x68, 0x52, 0x0c, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x12,
+	0x3f, 0x0a, 0x06, 0x65, 0x70, 0x6f, 0x63, 0x68, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x21, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2e, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x73, 0x45, 0x6e, 0x74,
+	0x72, 0x79, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x65, 0x70, 0x6f, 0x63, 0x68, 0x73,
+	0x12, 0x46, 0x0a, 0x0b, 0x73, 0x74, 0x61, 0x74, 0x65, 0x5f, 0x72, 0x6f, 0x6f, 0x74, 0x73, 0x18,
+	0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e,
+	0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2e, 0x53, 0x74, 0x61,
+	0x74, 0x65, 0x52, 0x6f, 0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x73, 0x74,
+	0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x74, 0x73, 0x12, 0x21, 0x0a, 0x0c, 0x6d, 0x61, 0x69, 0x6c,
+	0x62, 0x6f, 0x78, 0x5f, 0x72, 0x6f, 0x6f, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b,
+	0x6d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f, 0x6f, 0x74, 0x1a, 0x49, 0x0a, 0x0b, 0x45,
+	0x70, 0x6f, 0x63, 0x68, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
+	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x24, 0x0a, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x6e, 0x6f,
+	0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x52, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x3d, 0x0a, 0x0f, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52,
+	0x6f, 0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x3a, 0x02, 0x38, 0x01, 0x42, 0x89, 0x01, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f,
+	0x76, 0x61, 0x2e, 0x76, 0x31, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50, 0x72,
+	0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
+	0x6d, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2d, 0x61, 0x73, 0x73, 0x65, 0x74, 0x73, 0x2f, 0x6e,
+	0x6f, 0x76, 0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x3b,
+	0x6e, 0x6f, 0x76, 0x61, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x58, 0x58, 0xaa, 0x02, 0x07, 0x4e,
+	0x6f, 0x76, 0x61, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x07, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31,
+	0xe2, 0x02, 0x13, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65,
+	0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x08, 0x4e, 0x6f, 0x76, 0x61, 0x3a, 0x3a, 0x56,
+	0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -438,16 +1333,25 @@ func file_nova_v1_genesis_proto_rawDescGZIP() []byte {
 	return file_nova_v1_genesis_proto_rawDescData
 }
 
-var file_nova_v1_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_nova_v1_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_nova_v1_genesis_proto_goTypes = []interface{}{
 	(*GenesisState)(nil), // 0: nova.v1.GenesisState
+	nil,                  // 1: nova.v1.GenesisState.EpochsEntry
+	nil,                  // 2: nova.v1.GenesisState.StateRootsEntry
+	(*Config)(nil),       // 3: nova.v1.Config
+	(*Epoch)(nil),        // 4: nova.v1.Epoch
 }
 var file_nova_v1_genesis_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: nova.v1.GenesisState.config:type_name -> nova.v1.Config
+	4, // 1: nova.v1.GenesisState.current_epoch:type_name -> nova.v1.Epoch
+	1, // 2: nova.v1.GenesisState.epochs:type_name -> nova.v1.GenesisState.EpochsEntry
+	2, // 3: nova.v1.GenesisState.state_roots:type_name -> nova.v1.GenesisState.StateRootsEntry
+	4, // 4: nova.v1.GenesisState.EpochsEntry.value:type_name -> nova.v1.Epoch
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_nova_v1_genesis_proto_init() }
@@ -455,6 +1359,7 @@ func file_nova_v1_genesis_proto_init() {
 	if File_nova_v1_genesis_proto != nil {
 		return
 	}
+	file_nova_v1_nova_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_nova_v1_genesis_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GenesisState); i {
@@ -475,7 +1380,7 @@ func file_nova_v1_genesis_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_nova_v1_genesis_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

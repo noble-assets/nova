@@ -7,7 +7,10 @@
 package novav1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,10 +18,25 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Query_Config_FullMethodName       = "/nova.v1.Query/Config"
+	Query_CurrentEpoch_FullMethodName = "/nova.v1.Query/CurrentEpoch"
+	Query_Epoch_FullMethodName        = "/nova.v1.Query/Epoch"
+	Query_StateRoots_FullMethodName   = "/nova.v1.Query/StateRoots"
+	Query_StateRoot_FullMethodName    = "/nova.v1.Query/StateRoot"
+	Query_MailboxRoot_FullMethodName  = "/nova.v1.Query/MailboxRoot"
+)
+
 // QueryClient is the client API for Query service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type QueryClient interface {
+	Config(ctx context.Context, in *QueryConfig, opts ...grpc.CallOption) (*QueryConfigResponse, error)
+	CurrentEpoch(ctx context.Context, in *QueryCurrentEpoch, opts ...grpc.CallOption) (*QueryEpochResponse, error)
+	Epoch(ctx context.Context, in *QueryEpochRequest, opts ...grpc.CallOption) (*QueryEpochResponse, error)
+	StateRoots(ctx context.Context, in *QueryStateRoots, opts ...grpc.CallOption) (*QueryStateRootsResponse, error)
+	StateRoot(ctx context.Context, in *QueryStateRoot, opts ...grpc.CallOption) (*QueryStateRootResponse, error)
+	MailboxRoot(ctx context.Context, in *QueryMailboxRoot, opts ...grpc.CallOption) (*QueryMailboxRootResponse, error)
 }
 
 type queryClient struct {
@@ -29,10 +47,76 @@ func NewQueryClient(cc grpc.ClientConnInterface) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) Config(ctx context.Context, in *QueryConfig, opts ...grpc.CallOption) (*QueryConfigResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryConfigResponse)
+	err := c.cc.Invoke(ctx, Query_Config_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) CurrentEpoch(ctx context.Context, in *QueryCurrentEpoch, opts ...grpc.CallOption) (*QueryEpochResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryEpochResponse)
+	err := c.cc.Invoke(ctx, Query_CurrentEpoch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) Epoch(ctx context.Context, in *QueryEpochRequest, opts ...grpc.CallOption) (*QueryEpochResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryEpochResponse)
+	err := c.cc.Invoke(ctx, Query_Epoch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) StateRoots(ctx context.Context, in *QueryStateRoots, opts ...grpc.CallOption) (*QueryStateRootsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryStateRootsResponse)
+	err := c.cc.Invoke(ctx, Query_StateRoots_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) StateRoot(ctx context.Context, in *QueryStateRoot, opts ...grpc.CallOption) (*QueryStateRootResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryStateRootResponse)
+	err := c.cc.Invoke(ctx, Query_StateRoot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) MailboxRoot(ctx context.Context, in *QueryMailboxRoot, opts ...grpc.CallOption) (*QueryMailboxRootResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryMailboxRootResponse)
+	err := c.cc.Invoke(ctx, Query_MailboxRoot_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
 type QueryServer interface {
+	Config(context.Context, *QueryConfig) (*QueryConfigResponse, error)
+	CurrentEpoch(context.Context, *QueryCurrentEpoch) (*QueryEpochResponse, error)
+	Epoch(context.Context, *QueryEpochRequest) (*QueryEpochResponse, error)
+	StateRoots(context.Context, *QueryStateRoots) (*QueryStateRootsResponse, error)
+	StateRoot(context.Context, *QueryStateRoot) (*QueryStateRootResponse, error)
+	MailboxRoot(context.Context, *QueryMailboxRoot) (*QueryMailboxRootResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -43,6 +127,24 @@ type QueryServer interface {
 // pointer dereference when methods are called.
 type UnimplementedQueryServer struct{}
 
+func (UnimplementedQueryServer) Config(context.Context, *QueryConfig) (*QueryConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Config not implemented")
+}
+func (UnimplementedQueryServer) CurrentEpoch(context.Context, *QueryCurrentEpoch) (*QueryEpochResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CurrentEpoch not implemented")
+}
+func (UnimplementedQueryServer) Epoch(context.Context, *QueryEpochRequest) (*QueryEpochResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Epoch not implemented")
+}
+func (UnimplementedQueryServer) StateRoots(context.Context, *QueryStateRoots) (*QueryStateRootsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StateRoots not implemented")
+}
+func (UnimplementedQueryServer) StateRoot(context.Context, *QueryStateRoot) (*QueryStateRootResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StateRoot not implemented")
+}
+func (UnimplementedQueryServer) MailboxRoot(context.Context, *QueryMailboxRoot) (*QueryMailboxRootResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MailboxRoot not implemented")
+}
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
 
@@ -64,13 +166,146 @@ func RegisterQueryServer(s grpc.ServiceRegistrar, srv QueryServer) {
 	s.RegisterService(&Query_ServiceDesc, srv)
 }
 
+func _Query_Config_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryConfig)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Config(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Config_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Config(ctx, req.(*QueryConfig))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_CurrentEpoch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryCurrentEpoch)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).CurrentEpoch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_CurrentEpoch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).CurrentEpoch(ctx, req.(*QueryCurrentEpoch))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Epoch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryEpochRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Epoch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Epoch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Epoch(ctx, req.(*QueryEpochRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_StateRoots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryStateRoots)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).StateRoots(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_StateRoots_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).StateRoots(ctx, req.(*QueryStateRoots))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_StateRoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryStateRoot)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).StateRoot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_StateRoot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).StateRoot(ctx, req.(*QueryStateRoot))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_MailboxRoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryMailboxRoot)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).MailboxRoot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_MailboxRoot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).MailboxRoot(ctx, req.(*QueryMailboxRoot))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Query_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "nova.v1.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "nova/v1/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Config",
+			Handler:    _Query_Config_Handler,
+		},
+		{
+			MethodName: "CurrentEpoch",
+			Handler:    _Query_CurrentEpoch_Handler,
+		},
+		{
+			MethodName: "Epoch",
+			Handler:    _Query_Epoch_Handler,
+		},
+		{
+			MethodName: "StateRoots",
+			Handler:    _Query_StateRoots_Handler,
+		},
+		{
+			MethodName: "StateRoot",
+			Handler:    _Query_StateRoot_Handler,
+		},
+		{
+			MethodName: "MailboxRoot",
+			Handler:    _Query_MailboxRoot_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "nova/v1/query.proto",
 }

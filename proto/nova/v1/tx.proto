@@ -3,9 +3,18 @@ syntax = "proto3";
 package nova.v1;
 
 import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "tendermint/abci/types.proto";
 
 option go_package = "github.com/noble-assets/nova/types";
 
 service Msg {
   option (cosmos.msg.v1.service) = true;
+}
+
+message Injection {
+  uint64 epoch_number = 1;
+  string state_root = 2;
+  string mailbox_root = 3;
+  tendermint.abci.ExtendedCommitInfo commit_info = 4 [(gogoproto.nullable) = false];
 }

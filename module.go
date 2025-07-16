@@ -21,6 +21,7 @@
 package nova
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -29,12 +30,16 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/spf13/cast"
+	"github.com/spf13/viper"
 
 	modulev1 "github.com/noble-assets/nova/api/module/v1"
 	novav1 "github.com/noble-assets/nova/api/v1"
@@ -72,7 +77,11 @@ func (AppModuleBasic) RegisterInterfaces(reg codectypes.InterfaceRegistry) {
 	types.RegisterInterfaces(reg)
 }
 
-func (AppModuleBasic) RegisterGRPCGatewayRoutes(_ client.Context, _ *runtime.ServeMux) {}
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
+}
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	return cdc.MustMarshalJSON(types.DefaultGenesisState())
@@ -153,8 +162,13 @@ type ModuleInputs struct {
 
 	Config *modulev1.Module
 
-	StoreService store.KVStoreService
-	Logger       log.Logger
+	Codec          codec.Codec
+	StoreService   store.KVStoreService
+	Logger         log.Logger
+	ValidatorStore baseapp.ValidatorStore
+
+	AppOpts servertypes.AppOptions `optional:"true"`
+	Viper   *viper.Viper           `optional:"true"`
 }
 
 type ModuleOutputs struct {
@@ -165,7 +179,14 @@ type ModuleOutputs struct {
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	k := keeper.NewKeeper(in.StoreService, in.Logger)
+	var rpcAddress string
+	if in.Viper != nil { // viper takes precedence over app options
+		rpcAddress = in.Viper.GetString(FlagRPCAddress)
+	} else if in.AppOpts != nil {
+		rpcAddress = cast.ToString(in.AppOpts.Get(FlagRPCAddress))
+	}
+
+	k := keeper.NewKeeper(in.Codec, in.StoreService, in.Logger, rpcAddress, in.ValidatorStore)
 	m := NewAppModule(k)
 
 	return ModuleOutputs{Keeper: k, Module: m}

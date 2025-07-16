@@ -128,6 +128,11 @@ func NewSimApp(
 
 	app.App = appBuilder.Build(db, traceStore, baseAppOptions...)
 
+	app.SetExtendVoteHandler(app.NovaKeeper.ExtendVoteHandler(app.txConfig))
+	app.SetPrepareProposal(app.NovaKeeper.PrepareProposalHandler(app.txConfig))
+	app.SetProcessProposal(app.NovaKeeper.ProcessProposalHandler(app.txConfig))
+	app.SetPreBlocker(app.NovaKeeper.PreBlockerHandler(app.txConfig))
+
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {
 		return nil, err
 	}

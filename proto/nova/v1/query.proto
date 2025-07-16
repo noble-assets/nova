@@ -2,6 +2,73 @@ syntax = "proto3";
 
 package nova.v1;
 
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "nova/v1/nova.proto";
+
 option go_package = "github.com/noble-assets/nova/types";
 
-service Query {}
+service Query {
+  // TODO: Add module_safe_query option tags where applicable!
+
+  rpc Config(QueryConfig) returns (QueryConfigResponse) {
+    option (google.api.http) = {get: "/nova/v1/config"};
+  }
+
+  rpc CurrentEpoch(QueryCurrentEpoch) returns (QueryEpochResponse) {
+    option (google.api.http) = {get: "/nova/v1/epoch"};
+  }
+
+  rpc Epoch(QueryEpochRequest) returns (QueryEpochResponse) {
+    option (google.api.http) = {get: "/nova/v1/epoch/{number}"};
+  }
+
+  rpc StateRoots(QueryStateRoots) returns (QueryStateRootsResponse) {
+    option (google.api.http) = {get: "/nova/v1/state_roots"};
+  }
+
+  rpc StateRoot(QueryStateRoot) returns (QueryStateRootResponse) {
+    option (google.api.http) = {get: "/nova/v1/state_root/{epoch}"};
+  }
+
+  rpc MailboxRoot(QueryMailboxRoot) returns (QueryMailboxRootResponse) {
+    option (google.api.http) = {get: "/nova/v1/mailbox_root"};
+  }
+}
+
+message QueryConfig {}
+
+message QueryConfigResponse {
+  uint64 epoch_length = 1;
+  string hook_address = 2;
+}
+
+message QueryCurrentEpoch {}
+
+message QueryEpochRequest {
+  uint64 number = 1;
+}
+
+message QueryEpochResponse {
+  Epoch epoch = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryStateRoots {}
+
+message QueryStateRootsResponse {
+  map<uint64, string> state_roots = 1;
+}
+
+message QueryStateRoot {
+  uint64 epoch = 1;
+}
+
+message QueryStateRootResponse {
+  string state_root = 1;
+}
+
+message QueryMailboxRoot {}
+
+message QueryMailboxRootResponse {
+  string mailbox_root = 1;
+}

@@ -24,18 +24,52 @@ import (
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/ethereum/go-ethereum/ethclient"
+
+	"github.com/noble-assets/nova/types"
 )
 
 type Keeper struct {
-	logger log.Logger
+	client   *ethclient.Client
+	logger   log.Logger
+	valStore baseapp.ValidatorStore
+
+	hookAddress  collections.Item[[]byte]
+	epochLength  collections.Item[uint64]
+	currentEpoch collections.Item[types.Epoch]
+	epochs       collections.Map[uint64, types.Epoch]
+	stateRoots   collections.Map[uint64, []byte]
+	mailboxRoot  collections.Item[[]byte]
 }
 
-func NewKeeper(store store.KVStoreService, logger log.Logger) *Keeper {
+func NewKeeper(cdc codec.BinaryCodec, store store.KVStoreService, logger log.Logger, rpcAddress string, valStore baseapp.ValidatorStore) *Keeper {
+	var err error
 	builder := collections.NewSchemaBuilder(store)
 
-	keeper := &Keeper{}
+	var client *ethclient.Client
+	if rpcAddress != "" {
+		client, err = ethclient.Dial(rpcAddress)
+		if err != nil {
+			panic(err)
+		}
+	}
 
-	_, err := builder.Build()
+	keeper := &Keeper{
+		client:   client,
+		logger:   logger.With("module", types.ModuleName),
+		valStore: valStore,
+
+		hookAddress:  collections.NewItem(builder, types.HookAddressKey, "hook_address", collections.BytesValue),
+		epochLength:  collections.NewItem(builder, types.EpochLengthKey, "epoch_length", collections.Uint64Value),
+		currentEpoch: collections.NewItem(builder, types.CurrentEpochKey, "current_epoch", codec.CollValue[types.Epoch](cdc)),
+		epochs:       collections.NewMap(builder, types.EpochPrefix, "epochs", collections.Uint64Key, codec.CollValue[types.Epoch](cdc)),
+		stateRoots:   collections.NewMap(builder, types.StateRootPrefix, "state_roots", collections.Uint64Key, collections.BytesValue),
+		mailboxRoot:  collections.NewItem(builder, types.MailboxRootKey, "mailbox_root", collections.BytesValue),
+	}
+
+	_, err = builder.Build()
 	if err != nil {
 		panic(err)
 	}

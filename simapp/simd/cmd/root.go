@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 
+	"github.com/noble-assets/nova"
 	"github.com/noble-assets/nova/simapp"
 )
 
@@ -93,7 +94,8 @@ func NewRootCmd() *cobra.Command {
 			srvCfg.MinGasPrices = "0uusdc"
 			srvCfg.API.Enable = true
 
-			return server.InterceptConfigsPreRunHandler(cmd, serverconfig.DefaultConfigTemplate, srvCfg, cmtcfg.DefaultConfig())
+			configTemplate, cfg := nova.AppendConfig(srvCfg)
+			return server.InterceptConfigsPreRunHandler(cmd, configTemplate, cfg, cmtcfg.DefaultConfig())
 		},
 	}
 
