@@ -27,10 +27,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-func RegisterLegacyAminoCodec(_ *codec.LegacyAmino) {}
+func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
+	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
+}
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
+	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
+	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
