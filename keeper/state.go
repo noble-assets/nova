@@ -22,6 +22,7 @@ package keeper
 
 import (
 	"context"
+	"errors"
 
 	"github.com/ethereum/go-ethereum/common"
 
@@ -53,44 +54,60 @@ func (k *Keeper) setEpochLength(ctx context.Context, length uint64) error {
 	return k.epochLength.Set(ctx, length)
 }
 
-// GetCurrentEpoch returns the current epoch from state.
-func (k *Keeper) GetCurrentEpoch(ctx context.Context) (types.Epoch, error) {
-	return k.currentEpoch.Get(ctx)
+// GetPendingEpoch returns the currently pending epoch from state.
+func (k *Keeper) GetPendingEpoch(ctx context.Context) (types.Epoch, error) {
+	return k.pendingEpoch.Get(ctx)
 }
 
-// setCurrentEpoch saves the current epoch to state.
-func (k *Keeper) setCurrentEpoch(ctx context.Context, epoch types.Epoch) error {
-	return k.currentEpoch.Set(ctx, epoch)
+// setPendingEpoch saves the currently pending epoch to state.
+func (k *Keeper) setPendingEpoch(ctx context.Context, epoch types.Epoch) error {
+	return k.pendingEpoch.Set(ctx, epoch)
 }
 
-// GetEpoch returns a finalized epoch from state.
-func (k *Keeper) GetEpoch(ctx context.Context, number uint64) (types.Epoch, error) {
-	return k.epochs.Get(ctx, number)
+// GetLatestFinalizedEpoch returns the latest finalized epoch from state.
+func (k *Keeper) GetLatestFinalizedEpoch(ctx context.Context) (types.Epoch, error) {
+	pendingEpoch, err := k.GetPendingEpoch(ctx)
+	if err != nil {
+		return types.Epoch{}, errors.New("no pending epoch")
+	}
+
+	if pendingEpoch.Number == 0 {
+		return types.Epoch{}, errors.New("no finalized epoch")
+	}
+
+	latestEpochNumber := pendingEpoch.Number - 1
+	return k.GetFinalizedEpoch(ctx, latestEpochNumber)
 }
 
-// GetEpochs returns all finalized epochs from state.
-func (k *Keeper) GetEpochs(ctx context.Context) (map[uint64]types.Epoch, error) {
-	epochs := make(map[uint64]types.Epoch)
+// GetFinalizedEpoch returns a finalized epoch from state.
+func (k *Keeper) GetFinalizedEpoch(ctx context.Context, epochNumber uint64) (types.Epoch, error) {
+	return k.finalizedEpochs.Get(ctx, epochNumber)
+}
 
-	err := k.epochs.Walk(
+// GetFinalizedEpochs returns all finalized epochs from state.
+func (k *Keeper) GetFinalizedEpochs(ctx context.Context) (map[uint64]types.Epoch, error) {
+	finalizedEpochs := make(map[uint64]types.Epoch)
+
+	err := k.finalizedEpochs.Walk(
 		ctx, nil,
-		func(_ uint64, epoch types.Epoch) (stop bool, err error) {
-			epochs[epoch.Number] = epoch
+		func(epochNumber uint64, finalizedEpoch types.Epoch) (stop bool, err error) {
+			finalizedEpochs[epochNumber] = finalizedEpoch
 			return false, nil
 		},
 	)
 
-	return epochs, err
+	return finalizedEpochs, err
 }
 
-// setEpoch saves a finalized epoch to state.
-func (k *Keeper) setEpoch(ctx context.Context, epoch types.Epoch) error {
-	return k.epochs.Set(ctx, epoch.Number, epoch)
+// setFinalizedEpoch saves a finalized epoch to state.
+func (k *Keeper) setFinalizedEpoch(ctx context.Context, epoch types.Epoch) error {
+	return k.finalizedEpochs.Set(ctx, epoch.Number, epoch)
 }
 
-// startNewEpoch ... TODO
+// startNewEpoch is a utility that starts a new epoch, marking the currently
+// pending epoch as finalized given a state root and mailbox root.
 func (k *Keeper) startNewEpoch(ctx context.Context, stateRoot common.Hash, mailboxRoot common.Hash) error {
-	currentEpoch, err := k.GetCurrentEpoch(ctx)
+	pendingEpoch, err := k.GetPendingEpoch(ctx)
 	if err != nil {
 		return err
 	}
@@ -99,23 +116,23 @@ func (k *Keeper) startNewEpoch(ctx context.Context, stateRoot common.Hash, mailb
 		return err
 	}
 
-	err = k.setEpoch(ctx, currentEpoch)
+	err = k.setFinalizedEpoch(ctx, pendingEpoch)
 	if err != nil {
 		return err
 	}
-	err = k.setCurrentEpoch(ctx, types.Epoch{
-		Number:    currentEpoch.Number + 1,
-		EndHeight: currentEpoch.EndHeight + epochLength,
+	err = k.setPendingEpoch(ctx, types.Epoch{
+		Number:    pendingEpoch.Number + 1,
+		EndHeight: pendingEpoch.EndHeight + epochLength,
 	})
 	if err != nil {
 		return err
 	}
 
-	err = k.setStateRoot(ctx, currentEpoch.Number, stateRoot)
+	err = k.setStateRoot(ctx, pendingEpoch.Number, stateRoot)
 	if err != nil {
 		return err
 	}
-	err = k.setMailboxRoot(ctx, mailboxRoot)
+	err = k.setMailboxRoot(ctx, pendingEpoch.Number, mailboxRoot)
 	if err != nil {
 		return err
 	}
@@ -123,9 +140,24 @@ func (k *Keeper) startNewEpoch(ctx context.Context, stateRoot common.Hash, mailb
 	return nil
 }
 
+// GetLatestStateRoot returns the latest finalized state root from state.
+func (k *Keeper) GetLatestStateRoot(ctx context.Context) (common.Hash, error) {
+	pendingEpoch, err := k.GetPendingEpoch(ctx)
+	if err != nil {
+		return common.Hash{}, errors.New("no pending epoch")
+	}
+
+	if pendingEpoch.Number == 0 {
+		return common.Hash{}, errors.New("no finalized epoch")
+	}
+
+	latestEpochNumber := pendingEpoch.Number - 1
+	return k.GetStateRoot(ctx, latestEpochNumber)
+}
+
 // GetStateRoot returns a state root for an epoch from state.
-func (k *Keeper) GetStateRoot(ctx context.Context, epoch uint64) (common.Hash, error) {
-	stateRoot, err := k.stateRoots.Get(ctx, epoch)
+func (k *Keeper) GetStateRoot(ctx context.Context, epochNumber uint64) (common.Hash, error) {
+	stateRoot, err := k.stateRoots.Get(ctx, epochNumber)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -139,8 +171,8 @@ func (k *Keeper) GetStateRoots(ctx context.Context) (map[uint64]string, error) {
 
 	err := k.stateRoots.Walk(
 		ctx, nil,
-		func(epoch uint64, stateRoot []byte) (stop bool, err error) {
-			stateRoots[epoch] = common.Hash(stateRoot).String()
+		func(epochNumber uint64, stateRoot []byte) (stop bool, err error) {
+			stateRoots[epochNumber] = common.BytesToHash(stateRoot).String()
 			return false, nil
 		},
 	)
@@ -149,13 +181,28 @@ func (k *Keeper) GetStateRoots(ctx context.Context) (map[uint64]string, error) {
 }
 
 // setStateRoot saves a state root for an epoch to state.
-func (k *Keeper) setStateRoot(ctx context.Context, epoch uint64, stateRoot common.Hash) error {
-	return k.stateRoots.Set(ctx, epoch, stateRoot.Bytes())
+func (k *Keeper) setStateRoot(ctx context.Context, epochNumber uint64, stateRoot common.Hash) error {
+	return k.stateRoots.Set(ctx, epochNumber, stateRoot.Bytes())
 }
 
-// GetMailboxRoot returns the mailbox root from state.
-func (k *Keeper) GetMailboxRoot(ctx context.Context) (common.Hash, error) {
-	mailboxRoot, err := k.mailboxRoot.Get(ctx)
+// GetLatestMailboxRoot returns the latest finalized mailbox root from state.
+func (k *Keeper) GetLatestMailboxRoot(ctx context.Context) (common.Hash, error) {
+	pendingEpoch, err := k.GetPendingEpoch(ctx)
+	if err != nil {
+		return common.Hash{}, errors.New("no pending epoch")
+	}
+
+	if pendingEpoch.Number == 0 {
+		return common.Hash{}, errors.New("no finalized epoch")
+	}
+
+	latestEpochNumber := pendingEpoch.Number - 1
+	return k.GetMailboxRoot(ctx, latestEpochNumber)
+}
+
+// GetMailboxRoot returns a mailbox root for an epoch from state.
+func (k *Keeper) GetMailboxRoot(ctx context.Context, epochNumber uint64) (common.Hash, error) {
+	mailboxRoot, err := k.mailboxRoots.Get(ctx, epochNumber)
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -163,7 +210,22 @@ func (k *Keeper) GetMailboxRoot(ctx context.Context) (common.Hash, error) {
 	return common.Hash(mailboxRoot), nil
 }
 
-// setMailboxRoot saves the mailbox root to state.
-func (k *Keeper) setMailboxRoot(ctx context.Context, mailboxRoot common.Hash) error {
-	return k.mailboxRoot.Set(ctx, mailboxRoot.Bytes())
+// GetMailboxRoots returns all mailbox roots from state.
+func (k *Keeper) GetMailboxRoots(ctx context.Context) (map[uint64]string, error) {
+	mailboxRoots := make(map[uint64]string)
+
+	err := k.mailboxRoots.Walk(
+		ctx, nil,
+		func(epochNumber uint64, stateRoot []byte) (stop bool, err error) {
+			mailboxRoots[epochNumber] = common.BytesToHash(stateRoot).String()
+			return false, nil
+		},
+	)
+
+	return mailboxRoots, err
+}
+
+// setMailboxRoot saves a mailbox root for an epoch to state.
+func (k *Keeper) setMailboxRoot(ctx context.Context, epochNumber uint64, mailboxRoot common.Hash) error {
+	return k.mailboxRoots.Set(ctx, epochNumber, mailboxRoot.Bytes())
 }

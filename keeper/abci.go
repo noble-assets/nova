@@ -54,7 +54,7 @@ type VoteExtension struct {
 // AppLayer state root and mailbox root from the current epoch's end height.
 func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandler {
 	return func(ctx sdk.Context, req *abci.RequestExtendVote) (*abci.ResponseExtendVote, error) {
-		epoch, err := k.GetCurrentEpoch(ctx)
+		epoch, err := k.GetPendingEpoch(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -136,14 +136,23 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 		}
 
 		builder := txConfig.NewTxBuilder()
-		// TODO: Should we handle this error?
-		builder.SetMsgs(&types.Injection{
+		err = builder.SetMsgs(&types.Injection{
 			EpochNumber: extension.Nova.EpochNumber,
 			StateRoot:   extension.Nova.StateRoot.String(),
 			MailboxRoot: extension.Nova.MailboxRoot.String(),
 			CommitInfo:  req.LocalLastCommit,
 		})
-		bz, _ := txConfig.TxEncoder()(builder.GetTx())
+		if err != nil {
+			// If we fail to set the injection message, we simply log the error as we want block production to continue.
+			k.logger.Error("failed to set injection msg", "err", err)
+			return res, nil
+		}
+		bz, err := txConfig.TxEncoder()(builder.GetTx())
+		if err != nil {
+			// If we fail to encode the injected tx, we simply log the error as we want block production to continue.
+			k.logger.Error("failed to encode injection tx", "err", err)
+			return res, nil
+		}
 
 		txs := slices.Insert(req.Txs, 0, bz)
 		return &abci.ResponsePrepareProposal{Txs: txs}, nil
@@ -207,10 +216,24 @@ func (k *Keeper) PreBlockerHandler(txConfig client.TxConfig) sdk.PreBlocker {
 			stateRoot := common.HexToHash(injection.StateRoot)
 			mailboxRoot := common.HexToHash(injection.MailboxRoot)
 
-			// TODO: Handle error!
-			_ = k.startNewEpoch(ctx, stateRoot, mailboxRoot)
+			err := k.startNewEpoch(ctx, stateRoot, mailboxRoot)
+			if err != nil {
+				// If we fail to start a new epoch, we simply log the error as we want block production to continue.
+				k.logger.Error("failed to start new epoch", "err", err)
+				return res, nil
+			} else {
+				k.logger.Info(fmt.Sprintf("finalized epoch %d", injection.EpochNumber), "height", req.Height)
 
-			k.logger.Info(fmt.Sprintf("finalized epoch %d", injection.EpochNumber), "height", req.Height)
+				err = k.eventService.EventManager(ctx).Emit(ctx, &types.EpochFinalized{
+					EpochNumber: injection.EpochNumber,
+					StateRoot:   injection.StateRoot,
+					MailboxRoot: injection.MailboxRoot,
+				})
+				if err != nil {
+					// If we fail to emit the event, we simply log the error as we want block production to continue.
+					k.logger.Error("failed to emit finalized epoch event", "err", err)
+				}
+			}
 		}
 
 		return res, nil

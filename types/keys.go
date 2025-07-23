@@ -23,10 +23,10 @@ package types
 const ModuleName = "nova"
 
 var (
-	HookAddressKey  = []byte("hook_address")
-	EpochLengthKey  = []byte("epoch_length")
-	CurrentEpochKey = []byte("current_epoch")
-	EpochPrefix     = []byte("epoch/")
-	StateRootPrefix = []byte("state_root/")
-	MailboxRootKey  = []byte("mailbox_root")
+	HookAddressKey       = []byte("hook_address")
+	EpochLengthKey       = []byte("epoch_length")
+	PendingEpochKey      = []byte("pending_epoch")
+	FinalizedEpochPrefix = []byte("finalized_epoch/")
+	StateRootPrefix      = []byte("state_root/")
+	MailboxRootPrefix    = []byte("mailbox_root/")
 )

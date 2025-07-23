@@ -39,36 +39,39 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 		panic(errors.Wrap(err, "failed to set genesis hook address"))
 	}
 
-	var currentEpoch types.Epoch
-	if genesis.CurrentEpoch == nil {
-		currentEpoch = types.Epoch{
+	var pendingEpoch types.Epoch
+	if genesis.PendingEpoch == nil {
+		pendingEpoch = types.Epoch{
 			Number:    0,
 			EndHeight: genesis.Config.EpochLength,
 		}
 	} else {
-		currentEpoch = *genesis.CurrentEpoch
+		pendingEpoch = *genesis.PendingEpoch
 	}
-	if err := k.setCurrentEpoch(ctx, currentEpoch); err != nil {
-		panic(errors.Wrap(err, "failed to set genesis current epoch"))
+	if err := k.setPendingEpoch(ctx, pendingEpoch); err != nil {
+		panic(errors.Wrap(err, "failed to set genesis pending epoch"))
 	}
 
-	for _, epoch := range genesis.Epochs {
-		if err := k.setEpoch(ctx, epoch); err != nil {
-			panic(errors.Wrapf(err, "failed to set genesis epoch %d", epoch.Number))
+	for _, finalizedEpoch := range genesis.FinalizedEpochs {
+		if err := k.setFinalizedEpoch(ctx, finalizedEpoch); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis finalized epoch %d", finalizedEpoch.Number))
 		}
 	}
 
-	for epoch, rawStateRoot := range genesis.StateRoots {
+	for epochNumber, rawStateRoot := range genesis.StateRoots {
 		stateRoot := common.HexToHash(rawStateRoot)
 
-		if err := k.setStateRoot(ctx, epoch, stateRoot); err != nil {
-			panic(errors.Wrapf(err, "failed to set genesis state root %d", epoch))
+		if err := k.setStateRoot(ctx, epochNumber, stateRoot); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis state root %d", epochNumber))
 		}
 	}
 
-	mailboxRoot := common.HexToHash(genesis.MailboxRoot)
-	if err := k.setMailboxRoot(ctx, mailboxRoot); err != nil {
-		panic(errors.Wrap(err, "failed to set genesis mailbox root"))
+	for epochNumber, rawMailboxRoot := range genesis.MailboxRoots {
+		mailboxRoot := common.HexToHash(rawMailboxRoot)
+
+		if err := k.setMailboxRoot(ctx, epochNumber, mailboxRoot); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis mailbox root %d", epochNumber))
+		}
 	}
 }
 
@@ -80,16 +83,16 @@ func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 		HookAddress: hookAddress.String(),
 	}
 
-	currentEpoch, _ := k.GetCurrentEpoch(ctx)
-	epochs, _ := k.GetEpochs(ctx)
+	pendingEpoch, _ := k.GetPendingEpoch(ctx)
+	finalizedEpochs, _ := k.GetFinalizedEpochs(ctx)
 	stateRoots, _ := k.GetStateRoots(ctx)
-	mailboxRoot, _ := k.GetMailboxRoot(ctx)
+	mailboxRoots, _ := k.GetMailboxRoots(ctx)
 
 	return &types.GenesisState{
-		Config:       config,
-		CurrentEpoch: &currentEpoch,
-		Epochs:       epochs,
-		StateRoots:   stateRoots,
-		MailboxRoot:  mailboxRoot.String(),
+		Config:          config,
+		PendingEpoch:    &pendingEpoch,
+		FinalizedEpochs: finalizedEpochs,
+		StateRoots:      stateRoots,
+		MailboxRoots:    mailboxRoots,
 	}
 }

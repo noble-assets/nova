@@ -20,33 +20,9 @@
 
 package types
 
-import (
-	"fmt"
+import "cosmossdk.io/errors"
 
-	"github.com/ethereum/go-ethereum/common"
+var (
+	ErrInvalidRequest   = errors.Register(ModuleName, 0, "invalid request")
+	ErrInvalidAuthority = errors.Register(ModuleName, 1, "invalid authority")
 )
-
-func DefaultGenesisState() *GenesisState {
-	return &GenesisState{
-		Config: Config{
-			EpochLength: 100, // 5 secs @ 50 ms AppLayer block time.
-			HookAddress: common.Address{}.String(),
-		},
-	}
-}
-
-func (genesis *GenesisState) Validate() error {
-	if genesis.Config.EpochLength <= 0 {
-		return fmt.Errorf("invalid nova epoch length: %d", genesis.Config.EpochLength)
-	}
-
-	if valid := common.IsHexAddress(genesis.Config.HookAddress); !valid {
-		return fmt.Errorf("invalid nova hook address: %s", genesis.Config.HookAddress)
-	}
-
-	// TODO: Should we validate finalizedEpochs?
-
-	// TODO(stateRoots, mailboxRoots): go-ethereum doesn't provide a way of validating a hash
-
-	return nil
-}

@@ -15,24 +15,38 @@ service Query {
     option (google.api.http) = {get: "/nova/v1/config"};
   }
 
-  rpc CurrentEpoch(QueryCurrentEpoch) returns (QueryEpochResponse) {
-    option (google.api.http) = {get: "/nova/v1/epoch"};
+  rpc PendingEpoch(QueryPendingEpoch) returns (QueryEpochResponse) {
+    option (google.api.http) = {get: "/nova/v1/pending_epoch"};
   }
 
-  rpc Epoch(QueryEpochRequest) returns (QueryEpochResponse) {
-    option (google.api.http) = {get: "/nova/v1/epoch/{number}"};
+  rpc FinalizedEpochs(QueryFinalizedEpochs) returns (QueryFinalizedEpochsResponse) {
+    option (google.api.http) = {get: "/nova/v1/finalized_epochs"};
+  }
+  rpc LatestFinalizedEpoch(QueryLatestFinalizedEpoch) returns (QueryEpochResponse) {
+    option (google.api.http) = {get: "/nova/v1/finalized_epoch"};
+  }
+  rpc FinalizedEpoch(QueryFinalizedEpoch) returns (QueryEpochResponse) {
+    option (google.api.http) = {get: "/nova/v1/finalized_epoch/{epoch_number}"};
   }
 
   rpc StateRoots(QueryStateRoots) returns (QueryStateRootsResponse) {
     option (google.api.http) = {get: "/nova/v1/state_roots"};
   }
-
+  rpc LatestStateRoot(QueryLatestStateRoot) returns (QueryStateRootResponse) {
+    option (google.api.http) = {get: "/nova/v1/state_root"};
+  }
   rpc StateRoot(QueryStateRoot) returns (QueryStateRootResponse) {
-    option (google.api.http) = {get: "/nova/v1/state_root/{epoch}"};
+    option (google.api.http) = {get: "/nova/v1/state_root/{epoch_number}"};
   }
 
-  rpc MailboxRoot(QueryMailboxRoot) returns (QueryMailboxRootResponse) {
+  rpc MailboxRoots(QueryMailboxRoots) returns (QueryMailboxRootsResponse) {
+    option (google.api.http) = {get: "/nova/v1/mailbox_roots"};
+  }
+  rpc LatestMailboxRoot(QueryLatestMailboxRoot) returns (QueryMailboxRootResponse) {
     option (google.api.http) = {get: "/nova/v1/mailbox_root"};
+  }
+  rpc MailboxRoot(QueryMailboxRoot) returns (QueryMailboxRootResponse) {
+    option (google.api.http) = {get: "/nova/v1/mailbox_root/{epoch_number}"};
   }
 }
 
@@ -43,10 +57,18 @@ message QueryConfigResponse {
   string hook_address = 2;
 }
 
-message QueryCurrentEpoch {}
+message QueryFinalizedEpochs {}
 
-message QueryEpochRequest {
-  uint64 number = 1;
+message QueryFinalizedEpochsResponse {
+  map<uint64, Epoch> finalized_epochs = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPendingEpoch {}
+
+message QueryLatestFinalizedEpoch {}
+
+message QueryFinalizedEpoch {
+  uint64 epoch_number = 1;
 }
 
 message QueryEpochResponse {
@@ -59,15 +81,27 @@ message QueryStateRootsResponse {
   map<uint64, string> state_roots = 1;
 }
 
+message QueryLatestStateRoot {}
+
 message QueryStateRoot {
-  uint64 epoch = 1;
+  uint64 epoch_number = 1;
 }
 
 message QueryStateRootResponse {
   string state_root = 1;
 }
 
-message QueryMailboxRoot {}
+message QueryMailboxRoots {}
+
+message QueryMailboxRootsResponse {
+  map<uint64, string> mailbox_roots = 1;
+}
+
+message QueryLatestMailboxRoot {}
+
+message QueryMailboxRoot {
+  uint64 epoch_number = 1;
+}
 
 message QueryMailboxRootResponse {
   string mailbox_root = 1;

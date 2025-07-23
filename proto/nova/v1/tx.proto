@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package nova.v1;
 
+import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "tendermint/abci/types.proto";
 
@@ -10,6 +12,9 @@ option go_package = "github.com/noble-assets/nova/types";
 
 service Msg {
   option (cosmos.msg.v1.service) = true;
+
+  rpc SetEpochLength(MsgSetEpochLength) returns (MsgSetEpochLengthResponse);
+  rpc SetHookAddress(MsgSetHookAddress) returns (MsgSetHookAddressResponse);
 }
 
 message Injection {
@@ -18,3 +23,33 @@ message Injection {
   string mailbox_root = 3;
   tendermint.abci.ExtendedCommitInfo commit_info = 4 [(gogoproto.nullable) = false];
 }
+
+// MsgSetEpochLength allows the module authority to set the epoch length.
+message MsgSetEpochLength {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "nova/SetEpochLength";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 epoch_length = 2;
+}
+
+// MsgSetEpochLengthResponse is the response of the SetEpochLength message.
+message MsgSetEpochLengthResponse {}
+
+// MsgSetHookAddress allows the module authority to set the epoch length.
+message MsgSetHookAddress {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "nova/SetHookAddress";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string hook_address = 2;
+}
+
+// MsgSetHookAddressResponse is the response of the SetHookAddress message.
+message MsgSetHookAddressResponse {}

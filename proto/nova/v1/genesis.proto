@@ -10,8 +10,8 @@ option go_package = "github.com/noble-assets/nova/types";
 // GenesisState defines the genesis state of the Nova module.
 message GenesisState {
   Config config = 1 [(gogoproto.nullable) = false];
-  Epoch current_epoch = 2;
-  map<uint64, Epoch> epochs = 3 [(gogoproto.nullable) = false];
+  Epoch pending_epoch = 2;
+  map<uint64, Epoch> finalized_epochs = 3 [(gogoproto.nullable) = false];
   map<uint64, string> state_roots = 4;
-  string mailbox_root = 5;
+  map<uint64, string> mailbox_roots = 5;
 }
