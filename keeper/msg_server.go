@@ -50,7 +50,7 @@ func (s msgServer) SetEpochLength(ctx context.Context, msg *types.MsgSetEpochLen
 
 	oldEpochLength, err := s.GetEpochLength(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get current epoch length")
+		return nil, errors.Wrap(err, "unable to get current epoch length from state")
 	}
 
 	err = s.setEpochLength(ctx, msg.EpochLength)
@@ -77,7 +77,7 @@ func (s msgServer) SetHookAddress(ctx context.Context, msg *types.MsgSetHookAddr
 
 	oldHookAddress, err := s.GetHookAddress(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get current hook address")
+		return nil, errors.Wrap(err, "unable to get current hook address from state")
 	}
 
 	err = s.setHookAddress(ctx, hookAddress)

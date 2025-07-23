@@ -259,7 +259,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 		panic("authority for nova module must be set")
 	}
 
-	var rpcAddress string
+	rpcAddress := DefaultRPCAddress
 	if in.Viper != nil { // viper takes precedence over app options
 		rpcAddress = in.Viper.GetString(FlagRPCAddress)
 	} else if in.AppOpts != nil {

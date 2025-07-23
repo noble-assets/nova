@@ -270,10 +270,12 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 		}
 	}
 
-	// NOTE: This is equivalent to doing winnerPower/totalPower >= 2/3
-	if winnerPower*3 >= totalPower*2 {
+	// NOTE: This is equivalent to doing winnerPower/totalPower > 2/3
+	if winnerPower*3 > totalPower*2 {
 		var extension VoteExtension
-		_ = json.Unmarshal([]byte(winner), &extension)
+		if err := json.Unmarshal([]byte(winner), &extension); err != nil {
+			return nil
+		}
 
 		return &extension
 	} else {
@@ -282,11 +284,34 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 }
 
 func parseInjection(txs [][]byte, txDecoder sdk.TxDecoder) *types.Injection {
-	if len(txs) < 1 {
+	// Because both Nova and Jester optionally inject transactions, we have to
+	// handle all three different cases of injections.
+
+	if len(txs) == 0 {
 		return nil
 	}
 
-	tx, err := txDecoder(txs[0])
+	if len(txs) == 1 {
+		return parseInjectionFromTx(txs[0], txDecoder)
+	}
+
+	if len(txs) > 1 {
+		injection := parseInjectionFromTx(txs[0], txDecoder)
+		if injection != nil {
+			return injection
+		}
+
+		injection = parseInjectionFromTx(txs[1], txDecoder)
+		if injection != nil {
+			return injection
+		}
+	}
+
+	return nil
+}
+
+func parseInjectionFromTx(bz []byte, txDecoder sdk.TxDecoder) *types.Injection {
+	tx, err := txDecoder(bz)
 	if err != nil {
 		return nil
 	}
@@ -306,5 +331,5 @@ func parseInjection(txs [][]byte, txDecoder sdk.TxDecoder) *types.Injection {
 
 func voteExtensionsDisabled(ctx sdk.Context) bool {
 	voteExtensionsEnableHeight := ctx.ConsensusParams().Abci.VoteExtensionsEnableHeight
-	return ctx.BlockHeight() <= voteExtensionsEnableHeight || voteExtensionsEnableHeight == 0
+	return voteExtensionsEnableHeight == 0 || ctx.BlockHeight() <= voteExtensionsEnableHeight
 }

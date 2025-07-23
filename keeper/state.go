@@ -23,6 +23,7 @@ package keeper
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
 
@@ -36,7 +37,7 @@ func (k *Keeper) GetHookAddress(ctx context.Context) (common.Address, error) {
 		return common.Address{}, err
 	}
 
-	return common.Address(hookAddress), nil
+	return common.BytesToAddress(hookAddress), nil
 }
 
 // setHookAddress saves the hook address to state.
@@ -81,7 +82,16 @@ func (k *Keeper) GetLatestFinalizedEpoch(ctx context.Context) (types.Epoch, erro
 
 // GetFinalizedEpoch returns a finalized epoch from state.
 func (k *Keeper) GetFinalizedEpoch(ctx context.Context, epochNumber uint64) (types.Epoch, error) {
-	return k.finalizedEpochs.Get(ctx, epochNumber)
+	if has, _ := k.finalizedEpochs.Has(ctx, epochNumber); !has {
+		return types.Epoch{}, fmt.Errorf("finalized epoch %d not found", epochNumber)
+	}
+
+	finalizedEpoch, err := k.finalizedEpochs.Get(ctx, epochNumber)
+	if err != nil {
+		return types.Epoch{}, fmt.Errorf("unable to get finalized epoch %d from state", epochNumber)
+	}
+
+	return finalizedEpoch, nil
 }
 
 // GetFinalizedEpochs returns all finalized epochs from state.
@@ -157,9 +167,13 @@ func (k *Keeper) GetLatestStateRoot(ctx context.Context) (common.Hash, error) {
 
 // GetStateRoot returns a state root for an epoch from state.
 func (k *Keeper) GetStateRoot(ctx context.Context, epochNumber uint64) (common.Hash, error) {
+	if has, _ := k.stateRoots.Has(ctx, epochNumber); !has {
+		return common.Hash{}, fmt.Errorf("state root for epoch %d not found", epochNumber)
+	}
+
 	stateRoot, err := k.stateRoots.Get(ctx, epochNumber)
 	if err != nil {
-		return common.Hash{}, err
+		return common.Hash{}, fmt.Errorf("unable to get state root for epoch %d from state", epochNumber)
 	}
 
 	return common.Hash(stateRoot), nil
@@ -202,9 +216,13 @@ func (k *Keeper) GetLatestMailboxRoot(ctx context.Context) (common.Hash, error) 
 
 // GetMailboxRoot returns a mailbox root for an epoch from state.
 func (k *Keeper) GetMailboxRoot(ctx context.Context, epochNumber uint64) (common.Hash, error) {
+	if has, _ := k.mailboxRoots.Has(ctx, epochNumber); !has {
+		return common.Hash{}, fmt.Errorf("mailbox root for epoch %d not found", epochNumber)
+	}
+
 	mailboxRoot, err := k.mailboxRoots.Get(ctx, epochNumber)
 	if err != nil {
-		return common.Hash{}, err
+		return common.Hash{}, fmt.Errorf("unable to get mailbox root for epoch %d from state", epochNumber)
 	}
 
 	return common.Hash(mailboxRoot), nil

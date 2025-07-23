@@ -36,7 +36,11 @@ func NewQueryServer(keeper *Keeper) types.QueryServer {
 	return &queryServer{Keeper: keeper}
 }
 
-func (s queryServer) Config(ctx context.Context, _ *types.QueryConfig) (*types.QueryConfigResponse, error) {
+func (s queryServer) Config(ctx context.Context, req *types.QueryConfig) (*types.QueryConfigResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	epochLength, err := s.Keeper.GetEpochLength(ctx)
 	if err != nil {
 		return nil, err
@@ -52,7 +56,11 @@ func (s queryServer) Config(ctx context.Context, _ *types.QueryConfig) (*types.Q
 	}, nil
 }
 
-func (s queryServer) PendingEpoch(ctx context.Context, _ *types.QueryPendingEpoch) (*types.QueryEpochResponse, error) {
+func (s queryServer) PendingEpoch(ctx context.Context, req *types.QueryPendingEpoch) (*types.QueryEpochResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	epoch, err := s.GetPendingEpoch(ctx)
 	if err != nil {
 		return nil, err
@@ -61,13 +69,24 @@ func (s queryServer) PendingEpoch(ctx context.Context, _ *types.QueryPendingEpoc
 	return &types.QueryEpochResponse{Epoch: epoch}, nil
 }
 
-func (s queryServer) FinalizedEpochs(ctx context.Context, _ *types.QueryFinalizedEpochs) (*types.QueryFinalizedEpochsResponse, error) {
-	finalizedEpochs, err := s.GetFinalizedEpochs(ctx)
+func (s queryServer) FinalizedEpochs(ctx context.Context, req *types.QueryFinalizedEpochs) (*types.QueryFinalizedEpochsResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
 
-	return &types.QueryFinalizedEpochsResponse{FinalizedEpochs: finalizedEpochs}, err
+	finalizedEpochs, err := s.GetFinalizedEpochs(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryFinalizedEpochsResponse{FinalizedEpochs: finalizedEpochs}, nil
 }
 
-func (s queryServer) LatestFinalizedEpoch(ctx context.Context, _ *types.QueryLatestFinalizedEpoch) (*types.QueryEpochResponse, error) {
+func (s queryServer) LatestFinalizedEpoch(ctx context.Context, req *types.QueryLatestFinalizedEpoch) (*types.QueryEpochResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	finalizedEpoch, err := s.GetLatestFinalizedEpoch(ctx)
 	if err != nil {
 		return nil, err
@@ -77,6 +96,10 @@ func (s queryServer) LatestFinalizedEpoch(ctx context.Context, _ *types.QueryLat
 }
 
 func (s queryServer) FinalizedEpoch(ctx context.Context, req *types.QueryFinalizedEpoch) (*types.QueryEpochResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	epoch, err := s.GetFinalizedEpoch(ctx, req.EpochNumber)
 	if err != nil {
 		return nil, err
@@ -85,13 +108,24 @@ func (s queryServer) FinalizedEpoch(ctx context.Context, req *types.QueryFinaliz
 	return &types.QueryEpochResponse{Epoch: epoch}, nil
 }
 
-func (s queryServer) StateRoots(ctx context.Context, _ *types.QueryStateRoots) (*types.QueryStateRootsResponse, error) {
-	stateRoots, err := s.GetStateRoots(ctx)
+func (s queryServer) StateRoots(ctx context.Context, req *types.QueryStateRoots) (*types.QueryStateRootsResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
 
-	return &types.QueryStateRootsResponse{StateRoots: stateRoots}, err
+	stateRoots, err := s.GetStateRoots(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryStateRootsResponse{StateRoots: stateRoots}, nil
 }
 
-func (s queryServer) LatestStateRoot(ctx context.Context, _ *types.QueryLatestStateRoot) (*types.QueryStateRootResponse, error) {
+func (s queryServer) LatestStateRoot(ctx context.Context, req *types.QueryLatestStateRoot) (*types.QueryStateRootResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	stateRoot, err := s.GetLatestStateRoot(ctx)
 	if err != nil {
 		return nil, err
@@ -101,6 +135,10 @@ func (s queryServer) LatestStateRoot(ctx context.Context, _ *types.QueryLatestSt
 }
 
 func (s queryServer) StateRoot(ctx context.Context, req *types.QueryStateRoot) (*types.QueryStateRootResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	stateRoot, err := s.GetStateRoot(ctx, req.EpochNumber)
 	if err != nil {
 		return nil, err
@@ -109,13 +147,24 @@ func (s queryServer) StateRoot(ctx context.Context, req *types.QueryStateRoot) (
 	return &types.QueryStateRootResponse{StateRoot: stateRoot.String()}, nil
 }
 
-func (s queryServer) MailboxRoots(ctx context.Context, _ *types.QueryMailboxRoots) (*types.QueryMailboxRootsResponse, error) {
+func (s queryServer) MailboxRoots(ctx context.Context, req *types.QueryMailboxRoots) (*types.QueryMailboxRootsResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	mailboxRoots, err := s.GetMailboxRoots(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryMailboxRootsResponse{MailboxRoots: mailboxRoots}, err
 }
 
-func (s queryServer) LatestMailboxRoot(ctx context.Context, _ *types.QueryLatestMailboxRoot) (*types.QueryMailboxRootResponse, error) {
+func (s queryServer) LatestMailboxRoot(ctx context.Context, req *types.QueryLatestMailboxRoot) (*types.QueryMailboxRootResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	mailboxRoot, err := s.GetLatestMailboxRoot(ctx)
 	if err != nil {
 		return nil, err
@@ -125,6 +174,10 @@ func (s queryServer) LatestMailboxRoot(ctx context.Context, _ *types.QueryLatest
 }
 
 func (s queryServer) MailboxRoot(ctx context.Context, req *types.QueryMailboxRoot) (*types.QueryMailboxRootResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
+
 	mailboxRoot, err := s.GetMailboxRoot(ctx, req.EpochNumber)
 	if err != nil {
 		return nil, err

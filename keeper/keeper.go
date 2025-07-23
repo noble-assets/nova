@@ -49,15 +49,11 @@ type Keeper struct {
 }
 
 func NewKeeper(authority string, cdc codec.BinaryCodec, storeService store.KVStoreService, eventService event.Service, logger log.Logger, rpcAddress string, valStore baseapp.ValidatorStore) *Keeper {
-	var err error
 	builder := collections.NewSchemaBuilder(storeService)
 
-	var client *ethclient.Client
-	if rpcAddress != "" {
-		client, err = ethclient.Dial(rpcAddress)
-		if err != nil {
-			panic(err)
-		}
+	client, err := ethclient.Dial(rpcAddress)
+	if err != nil {
+		panic(err)
 	}
 
 	keeper := &Keeper{
