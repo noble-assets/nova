@@ -74,12 +74,15 @@ func (s queryServer) FinalizedEpochs(ctx context.Context, req *types.QueryFinali
 		return nil, types.ErrInvalidRequest
 	}
 
-	finalizedEpochs, err := s.GetFinalizedEpochs(ctx)
+	finalizedEpochs, pagination, err := s.GetFinalizedEpochsPaginated(ctx, req.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.QueryFinalizedEpochsResponse{FinalizedEpochs: finalizedEpochs}, nil
+	return &types.QueryFinalizedEpochsResponse{
+		FinalizedEpochs: finalizedEpochs,
+		Pagination:      pagination,
+	}, nil
 }
 
 func (s queryServer) LatestFinalizedEpoch(ctx context.Context, req *types.QueryLatestFinalizedEpoch) (*types.QueryEpochResponse, error) {
@@ -113,12 +116,15 @@ func (s queryServer) StateRoots(ctx context.Context, req *types.QueryStateRoots)
 		return nil, types.ErrInvalidRequest
 	}
 
-	stateRoots, err := s.GetStateRoots(ctx)
+	stateRoots, pagination, err := s.GetStateRootsPaginated(ctx, req.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.QueryStateRootsResponse{StateRoots: stateRoots}, nil
+	return &types.QueryStateRootsResponse{
+		StateRoots: stateRoots,
+		Pagination: pagination,
+	}, nil
 }
 
 func (s queryServer) LatestStateRoot(ctx context.Context, req *types.QueryLatestStateRoot) (*types.QueryStateRootResponse, error) {
@@ -152,12 +158,15 @@ func (s queryServer) MailboxRoots(ctx context.Context, req *types.QueryMailboxRo
 		return nil, types.ErrInvalidRequest
 	}
 
-	mailboxRoots, err := s.GetMailboxRoots(ctx)
+	mailboxRoots, pagination, err := s.GetMailboxRootsPaginated(ctx, req.Pagination)
 	if err != nil {
 		return nil, err
 	}
 
-	return &types.QueryMailboxRootsResponse{MailboxRoots: mailboxRoots}, err
+	return &types.QueryMailboxRootsResponse{
+		MailboxRoots: mailboxRoots,
+		Pagination:   pagination,
+	}, err
 }
 
 func (s queryServer) LatestMailboxRoot(ctx context.Context, req *types.QueryLatestMailboxRoot) (*types.QueryMailboxRootResponse, error) {

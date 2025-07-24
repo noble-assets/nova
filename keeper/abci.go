@@ -293,24 +293,15 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 func parseInjection(txs [][]byte, txDecoder sdk.TxDecoder) *types.Injection {
 	// Because both Nova and Jester optionally inject transactions, we have to
 	// handle all three different cases of injections.
-
-	if len(txs) == 0 {
-		return nil
+	limit := len(txs)
+	maxRange := 2
+	if limit > maxRange {
+		limit = maxRange
 	}
 
-	if len(txs) == 1 {
-		return parseInjectionFromTx(txs[0], txDecoder)
-	}
-
-	if len(txs) > 1 {
-		injection := parseInjectionFromTx(txs[0], txDecoder)
-		if injection != nil {
-			return injection
-		}
-
-		injection = parseInjectionFromTx(txs[1], txDecoder)
-		if injection != nil {
-			return injection
+	for _, tx := range txs[:limit] {
+		if inj := parseInjectionFromTx(tx, txDecoder); inj != nil {
+			return inj
 		}
 	}
 

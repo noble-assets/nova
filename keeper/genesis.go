@@ -84,9 +84,9 @@ func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 	}
 
 	pendingEpoch, _ := k.GetPendingEpoch(ctx)
-	finalizedEpochs, _ := k.GetFinalizedEpochs(ctx)
-	stateRoots, _ := k.GetStateRoots(ctx)
-	mailboxRoots, _ := k.GetMailboxRoots(ctx)
+	finalizedEpochs, _ := k.getFinalizedEpochs(ctx)
+	stateRoots, _ := k.getStateRoots(ctx)
+	mailboxRoots, _ := k.getMailboxRoots(ctx)
 
 	return &types.GenesisState{
 		Config:          config,

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package nova.v1;
 
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "cosmos/query/v1/query.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "nova/v1/nova.proto";
@@ -9,43 +11,52 @@ import "nova/v1/nova.proto";
 option go_package = "github.com/noble-assets/nova/types";
 
 service Query {
-  // TODO: Add module_safe_query option tags where applicable!
-
   rpc Config(QueryConfig) returns (QueryConfigResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/config"};
   }
 
   rpc PendingEpoch(QueryPendingEpoch) returns (QueryEpochResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/pending_epoch"};
   }
 
   rpc FinalizedEpochs(QueryFinalizedEpochs) returns (QueryFinalizedEpochsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/finalized_epochs"};
   }
   rpc LatestFinalizedEpoch(QueryLatestFinalizedEpoch) returns (QueryEpochResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/finalized_epoch"};
   }
   rpc FinalizedEpoch(QueryFinalizedEpoch) returns (QueryEpochResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/finalized_epoch/{epoch_number}"};
   }
 
   rpc StateRoots(QueryStateRoots) returns (QueryStateRootsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/state_roots"};
   }
   rpc LatestStateRoot(QueryLatestStateRoot) returns (QueryStateRootResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/state_root"};
   }
   rpc StateRoot(QueryStateRoot) returns (QueryStateRootResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/state_root/{epoch_number}"};
   }
 
   rpc MailboxRoots(QueryMailboxRoots) returns (QueryMailboxRootsResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/mailbox_roots"};
   }
   rpc LatestMailboxRoot(QueryLatestMailboxRoot) returns (QueryMailboxRootResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/mailbox_root"};
   }
   rpc MailboxRoot(QueryMailboxRoot) returns (QueryMailboxRootResponse) {
+    option (cosmos.query.v1.module_query_safe) = true;
     option (google.api.http) = {get: "/nova/v1/mailbox_root/{epoch_number}"};
   }
 }
@@ -57,10 +68,13 @@ message QueryConfigResponse {
   string hook_address = 2;
 }
 
-message QueryFinalizedEpochs {}
+message QueryFinalizedEpochs {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
 
 message QueryFinalizedEpochsResponse {
-  map<uint64, Epoch> finalized_epochs = 1 [(gogoproto.nullable) = false];
+  repeated Epoch finalized_epochs = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryPendingEpoch {}
@@ -75,10 +89,18 @@ message QueryEpochResponse {
   Epoch epoch = 1 [(gogoproto.nullable) = false];
 }
 
-message QueryStateRoots {}
+message QueryStateRoots {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
 
 message QueryStateRootsResponse {
-  map<uint64, string> state_roots = 1;
+  message Value {
+    uint64 epoch_number = 1;
+    string state_root = 2;
+  }
+
+  repeated Value state_roots = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryLatestStateRoot {}
@@ -91,10 +113,18 @@ message QueryStateRootResponse {
   string state_root = 1;
 }
 
-message QueryMailboxRoots {}
+message QueryMailboxRoots {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
 
 message QueryMailboxRootsResponse {
-  map<uint64, string> mailbox_roots = 1;
+  message Value {
+    uint64 epoch_number = 1;
+    string mailbox_root = 2;
+  }
+
+  repeated Value mailbox_roots = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryLatestMailboxRoot {}
