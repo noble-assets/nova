@@ -176,7 +176,7 @@ func (k *Keeper) GetStateRoot(ctx context.Context, epochNumber uint64) (common.H
 		return common.Hash{}, fmt.Errorf("unable to get state root for epoch %d from state", epochNumber)
 	}
 
-	return common.Hash(stateRoot), nil
+	return common.BytesToHash(stateRoot), nil
 }
 
 // GetStateRoots returns all state roots from state.
@@ -225,7 +225,7 @@ func (k *Keeper) GetMailboxRoot(ctx context.Context, epochNumber uint64) (common
 		return common.Hash{}, fmt.Errorf("unable to get mailbox root for epoch %d from state", epochNumber)
 	}
 
-	return common.Hash(mailboxRoot), nil
+	return common.BytesToHash(mailboxRoot), nil
 }
 
 // GetMailboxRoots returns all mailbox roots from state.

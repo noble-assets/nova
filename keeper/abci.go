@@ -22,11 +22,13 @@ package keeper
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
 	"slices"
+	"time"
 
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -70,8 +72,10 @@ func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandl
 		}
 
 		height := big.NewInt(int64(epoch.EndHeight))
+		ctxWithTimeout, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
 
-		block, err := k.client.BlockByNumber(ctx, height)
+		block, err := k.client.BlockByNumber(ctxWithTimeout, height)
 		if err != nil {
 			if !errors.Is(err, ethereum.NotFound) {
 				// An example of this case would be that the local AppLayer
@@ -93,7 +97,10 @@ func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandl
 		if err == nil {
 			hook, err := abi.NewMerkleTreeHook(hookAddress, k.client)
 			if err == nil {
-				mailboxRoot, _ = hook.Root(&bind.CallOpts{BlockNumber: height})
+				mailboxRoot, _ = hook.Root(&bind.CallOpts{
+					BlockNumber: height,
+					Context:     ctxWithTimeout,
+				})
 			}
 		}
 
