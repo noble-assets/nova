@@ -142,8 +142,9 @@ func (k *Keeper) startNewEpoch(ctx context.Context, stateRoot common.Hash, mailb
 		return err
 	}
 	err = k.setPendingEpoch(ctx, types.Epoch{
-		Number:    pendingEpoch.Number + 1,
-		EndHeight: pendingEpoch.EndHeight + epochLength,
+		Number:      pendingEpoch.Number + 1,
+		StartHeight: pendingEpoch.EndHeight,
+		EndHeight:   pendingEpoch.EndHeight + epochLength,
 	})
 	if err != nil {
 		return err

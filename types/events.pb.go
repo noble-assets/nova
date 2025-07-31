@@ -22,7 +22,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// EpochFinalized is an event emitted whenever an epoch if finalized.
+// EpochFinalized is an event emitted whenever an epoch is finalized.
 type EpochFinalized struct {
 	// epoch_number defines the epoch number that was finalized.
 	EpochNumber uint64 `protobuf:"varint,1,opt,name=epoch_number,json=epochNumber,proto3" json:"epoch_number,omitempty"`

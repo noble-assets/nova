@@ -15,5 +15,6 @@ message Config {
 
 message Epoch {
   uint64 number = 1;
-  uint64 end_height = 2;
+  uint64 start_height = 2;
+  uint64 end_height = 3;
 }

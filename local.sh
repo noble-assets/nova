@@ -13,10 +13,13 @@ done
 if ! [ -f .nova/data/priv_validator_state.json ]; then
   novad init validator --chain-id "nova-1" --home .nova &> /dev/null
 
+  novad config set client chain-id "nova-1" --home .nova
+  novad config set client keyring-backend test --home .nova
+
   novad keys add validator --home .nova --keyring-backend test &> /dev/null
-  novad genesis add-genesis-account validator 1000000ustake --home .nova --keyring-backend test
+  novad genesis add-genesis-account validator 1000000ustake,1000000uusdn --home .nova --keyring-backend test
   novad keys add authority --recover --home .nova --keyring-backend test <<< "deny enhance title bind tunnel drill zebra daring hurt hedgehog outer suspect please suffer cinnamon able relief hen collect female capital jaguar page stand" &> /dev/null
-  novad genesis add-genesis-account authority 10000000uusdn --home .nova --keyring-backend test
+  novad genesis add-genesis-account authority 9000000uusdn --home .nova --keyring-backend test
 
   TEMP=.nova/genesis.json
   jq '.app_state.staking.params.bond_denom = "ustake"' .nova/config/genesis.json > $TEMP && mv $TEMP .nova/config/genesis.json

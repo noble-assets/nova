@@ -31,6 +31,7 @@ import (
 	"time"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -111,12 +112,15 @@ func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandl
 				MailboxRoot: mailboxRoot,
 			},
 		})
+		if err != nil {
+			return nil, err
+		}
 
 		k.logger.Info(fmt.Sprintf("extending vote for epoch %d", epoch.Number), "stateRoot", stateRoot, "mailboxRoot", common.Hash(mailboxRoot), "height", req.Height)
 
 		return &abci.ResponseExtendVote{
 			VoteExtension: bz,
-		}, err
+		}, nil
 	}
 }
 
@@ -150,15 +154,11 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 			CommitInfo:  req.LocalLastCommit,
 		})
 		if err != nil {
-			// If we fail to set the injection message, we simply log the error as we want block production to continue.
-			k.logger.Error("failed to set injection msg", "err", err)
-			return res, nil
+			return res, err
 		}
 		bz, err := txConfig.TxEncoder()(builder.GetTx())
 		if err != nil {
-			// If we fail to encode the injected tx, we simply log the error as we want block production to continue.
-			k.logger.Error("failed to encode injection tx", "err", err)
-			return res, nil
+			return res, err
 		}
 
 		txs := slices.Insert(req.Txs, 0, bz)
@@ -253,28 +253,29 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 	var totalPower int64
 	tallies := make(map[string]int64)
 
+	var winner string
+	var winnerPower int64
 	for _, vote := range info.Votes {
 		totalPower += vote.Validator.Power
 
+		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit {
+			continue
+		}
 		if len(vote.VoteExtension) == 0 {
 			continue
 		}
 
 		key := string(vote.VoteExtension)
 		tallies[key] += vote.Validator.Power
+		newPower := tallies[key]
+		if key != winner && newPower > winnerPower {
+			winner = key
+			winnerPower = newPower
+		}
 	}
 
 	if len(tallies) == 0 {
 		return nil
-	}
-
-	var winner string
-	var winnerPower int64
-	for key, power := range tallies {
-		if power > winnerPower {
-			winnerPower = power
-			winner = key
-		}
 	}
 
 	// NOTE: This is equivalent to doing winnerPower/totalPower > 2/3

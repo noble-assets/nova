@@ -42,8 +42,9 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 	var pendingEpoch types.Epoch
 	if genesis.PendingEpoch == nil {
 		pendingEpoch = types.Epoch{
-			Number:    0,
-			EndHeight: genesis.Config.EpochLength,
+			Number:      0,
+			StartHeight: 0,
+			EndHeight:   genesis.Config.EpochLength,
 		}
 	} else {
 		pendingEpoch = *genesis.PendingEpoch

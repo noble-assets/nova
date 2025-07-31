@@ -205,7 +205,7 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "mailbox-roots",
 					Short:     "Query all finalized mailbox roots",
 				},
-				// NOTE: LatestMailboxRoot and MailboxRoot are combines into a single custom command.
+				// NOTE: LatestMailboxRoot and MailboxRoot are combined into a single custom command.
 				{
 					RpcMethod: "LatestMailboxRoot",
 					Skip:      true,

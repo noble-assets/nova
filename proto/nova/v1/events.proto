@@ -4,7 +4,7 @@ package nova.v1;
 
 option go_package = "github.com/noble-assets/nova/types";
 
-// EpochFinalized is an event emitted whenever an epoch if finalized.
+// EpochFinalized is an event emitted whenever an epoch is finalized.
 message EpochFinalized {
   // epoch_number defines the epoch number that was finalized.
   uint64 epoch_number = 1;

@@ -1493,7 +1493,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// EpochFinalized is an event emitted whenever an epoch if finalized.
+// EpochFinalized is an event emitted whenever an epoch is finalized.
 type EpochFinalized struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
