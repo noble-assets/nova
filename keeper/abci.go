@@ -154,11 +154,11 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 			CommitInfo:  req.LocalLastCommit,
 		})
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		bz, err := txConfig.TxEncoder()(builder.GetTx())
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 
 		txs := slices.Insert(req.Txs, 0, bz)
