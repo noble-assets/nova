@@ -20,10 +20,33 @@
 
 package types
 
+import (
+	"fmt"
+
+	"github.com/ethereum/go-ethereum/common"
+)
+
 func DefaultGenesisState() *GenesisState {
-	return &GenesisState{}
+	return &GenesisState{
+		Config: Config{
+			EpochLength: 100, // 5 secs @ 50 ms AppLayer block time.
+			HookAddress: common.Address{}.String(),
+		},
+	}
 }
 
 func (genesis *GenesisState) Validate() error {
+	if genesis.Config.EpochLength <= 0 {
+		return fmt.Errorf("invalid nova epoch length: %d", genesis.Config.EpochLength)
+	}
+
+	if valid := common.IsHexAddress(genesis.Config.HookAddress); !valid {
+		return fmt.Errorf("invalid nova hook address: %s", genesis.Config.HookAddress)
+	}
+
+	// TODO: Should we validate finalizedEpochs?
+
+	// TODO(stateRoots, mailboxRoots): go-ethereum doesn't provide a way of validating a hash
+
 	return nil
 }

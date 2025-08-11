@@ -40,3 +40,6 @@ modules:
   - name: nova
     config:
       "@type": nova.module.v1.Module
+      # NOTE: This is a fake account used for local testing.
+      # deny enhance title bind tunnel drill zebra daring hurt hedgehog outer suspect please suffer cinnamon able relief hen collect female capital jaguar page stand
+      authority: noble1kg0mtdjvaqdnk5hw599na9mq66vs2c8zanes8t

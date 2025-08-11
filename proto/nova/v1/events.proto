@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package nova.v1;
+
+option go_package = "github.com/noble-assets/nova/types";
+
+// EpochFinalized is an event emitted whenever an epoch is finalized.
+message EpochFinalized {
+  // epoch_number defines the epoch number that was finalized.
+  uint64 epoch_number = 1;
+  // state_root defines the hex-encoded state root of the finalized epoch.
+  string state_root = 2;
+  // mailbox_root defines the hex-encoded mailbox root of the finalized epoch.
+  string mailbox_root = 3;
+}
+
+// EpochLengthSet is an event emitted whenever the module authority sets the epoch length.
+message EpochLengthSet {
+  // old_epoch_length defines the old epoch length before the update.
+  uint64 old_epoch_length = 1;
+  // new_epoch_length defines the new epoch length after the update.
+  uint64 new_epoch_length = 2;
+}
+
+// HookAddressSet is an event emitted whenever the module authority sets the hook address.
+message HookAddressSet {
+  // old_hook_address defines the old hex-encoded hook address before the update.
+  string old_hook_address = 1;
+  // new_hook_address defines the new hex-encoded hook address after the update.
+  string new_hook_address = 2;
+}

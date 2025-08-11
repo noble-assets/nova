@@ -5,6 +5,7 @@ package types
 
 import (
 	fmt "fmt"
+	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
 	io "io"
 	math "math"
@@ -24,6 +25,11 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the genesis state of the Nova module.
 type GenesisState struct {
+	Config          Config            `protobuf:"bytes,1,opt,name=config,proto3" json:"config"`
+	PendingEpoch    *Epoch            `protobuf:"bytes,2,opt,name=pending_epoch,json=pendingEpoch,proto3" json:"pending_epoch,omitempty"`
+	FinalizedEpochs map[uint64]Epoch  `protobuf:"bytes,3,rep,name=finalized_epochs,json=finalizedEpochs,proto3" json:"finalized_epochs" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	StateRoots      map[uint64]string `protobuf:"bytes,4,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	MailboxRoots    map[uint64]string `protobuf:"bytes,5,rep,name=mailbox_roots,json=mailboxRoots,proto3" json:"mailbox_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -59,23 +65,77 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
+func (m *GenesisState) GetConfig() Config {
+	if m != nil {
+		return m.Config
+	}
+	return Config{}
+}
+
+func (m *GenesisState) GetPendingEpoch() *Epoch {
+	if m != nil {
+		return m.PendingEpoch
+	}
+	return nil
+}
+
+func (m *GenesisState) GetFinalizedEpochs() map[uint64]Epoch {
+	if m != nil {
+		return m.FinalizedEpochs
+	}
+	return nil
+}
+
+func (m *GenesisState) GetStateRoots() map[uint64]string {
+	if m != nil {
+		return m.StateRoots
+	}
+	return nil
+}
+
+func (m *GenesisState) GetMailboxRoots() map[uint64]string {
+	if m != nil {
+		return m.MailboxRoots
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*GenesisState)(nil), "nova.v1.GenesisState")
+	proto.RegisterMapType((map[uint64]Epoch)(nil), "nova.v1.GenesisState.FinalizedEpochsEntry")
+	proto.RegisterMapType((map[uint64]string)(nil), "nova.v1.GenesisState.MailboxRootsEntry")
+	proto.RegisterMapType((map[uint64]string)(nil), "nova.v1.GenesisState.StateRootsEntry")
 }
 
 func init() { proto.RegisterFile("nova/v1/genesis.proto", fileDescriptor_2adc805538e3f283) }
 
 var fileDescriptor_2adc805538e3f283 = []byte{
-	// 132 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xcd, 0xcb, 0x2f, 0x4b,
-	0xd4, 0x2f, 0x33, 0xd4, 0x4f, 0x4f, 0xcd, 0x4b, 0x2d, 0xce, 0x2c, 0xd6, 0x2b, 0x28, 0xca, 0x2f,
-	0xc9, 0x17, 0x62, 0x07, 0x09, 0xeb, 0x95, 0x19, 0x2a, 0xf1, 0x71, 0xf1, 0xb8, 0x43, 0x64, 0x82,
-	0x4b, 0x12, 0x4b, 0x52, 0x9d, 0x6c, 0x4e, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1,
-	0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21,
-	0x4a, 0x29, 0x3d, 0xb3, 0x24, 0xa3, 0x34, 0x49, 0x2f, 0x39, 0x3f, 0x57, 0x3f, 0x2f, 0x3f, 0x29,
-	0x27, 0x55, 0x37, 0xb1, 0xb8, 0x38, 0xb5, 0xa4, 0x58, 0x1f, 0x6c, 0x43, 0x49, 0x65, 0x41, 0x6a,
-	0x71, 0x12, 0x1b, 0xd8, 0x74, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7d, 0xfc, 0x90, 0x3c,
-	0x76, 0x00, 0x00, 0x00,
+	// 386 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0x4e, 0xea, 0x40,
+	0x14, 0x86, 0x5b, 0x28, 0xdc, 0xdc, 0x01, 0x2e, 0xdc, 0x09, 0x26, 0x4d, 0x17, 0x95, 0x10, 0x8d,
+	0xc4, 0x84, 0x36, 0xc0, 0xc6, 0x18, 0x8d, 0x09, 0x06, 0xdc, 0xe8, 0xa6, 0xee, 0x74, 0x41, 0x5a,
+	0x18, 0xca, 0xc4, 0x32, 0xd3, 0x30, 0x43, 0x23, 0x3e, 0x85, 0xaf, 0xe3, 0x1b, 0xb0, 0x64, 0xe9,
+	0xca, 0x18, 0x78, 0x11, 0xd3, 0x69, 0x21, 0x55, 0xeb, 0xc2, 0x4d, 0x33, 0xfd, 0xcf, 0xff, 0x7f,
+	0x39, 0xe7, 0xe4, 0x80, 0x3d, 0x42, 0x03, 0xdb, 0x0c, 0x5a, 0xa6, 0x8b, 0x08, 0x62, 0x98, 0x19,
+	0xfe, 0x8c, 0x72, 0x0a, 0xff, 0x84, 0xb2, 0x11, 0xb4, 0xb4, 0xaa, 0x4b, 0x5d, 0x2a, 0x34, 0x33,
+	0x7c, 0x45, 0x65, 0x0d, 0x6e, 0x53, 0xc2, 0x26, 0xb4, 0xfa, 0x8b, 0x02, 0x8a, 0x57, 0x11, 0xe4,
+	0x96, 0xdb, 0x1c, 0xc1, 0x26, 0xc8, 0x0f, 0x29, 0x19, 0x63, 0x57, 0x95, 0x6b, 0x72, 0xa3, 0xd0,
+	0x2e, 0x1b, 0x31, 0xd4, 0xb8, 0x14, 0x72, 0x57, 0x59, 0xbe, 0xed, 0x4b, 0x56, 0x6c, 0x82, 0x1d,
+	0x50, 0xf2, 0x11, 0x19, 0x61, 0xe2, 0x0e, 0x90, 0x4f, 0x87, 0x13, 0x35, 0x23, 0x52, 0xff, 0x76,
+	0xa9, 0x5e, 0xa8, 0x5a, 0xc5, 0xd8, 0x24, 0xfe, 0xe0, 0x3d, 0xa8, 0x8c, 0x31, 0xb1, 0x3d, 0xfc,
+	0x84, 0x46, 0x51, 0x8c, 0xa9, 0xd9, 0x5a, 0xb6, 0x51, 0x68, 0x1f, 0xef, 0x72, 0xc9, 0xa6, 0x8c,
+	0xfe, 0xd6, 0x2d, 0xf2, 0xac, 0x47, 0xf8, 0x6c, 0x11, 0x37, 0x52, 0x1e, 0x7f, 0xae, 0xc1, 0x3e,
+	0x28, 0xb0, 0x30, 0x34, 0x98, 0x51, 0xca, 0x99, 0xaa, 0x08, 0xee, 0x61, 0x3a, 0x57, 0x7c, 0xad,
+	0xd0, 0x27, 0x90, 0x16, 0x60, 0x3b, 0x01, 0x5e, 0x83, 0xd2, 0xd4, 0xc6, 0x9e, 0x43, 0x1f, 0x63,
+	0x52, 0x4e, 0x90, 0x8e, 0xd2, 0x49, 0x37, 0x91, 0x35, 0xc1, 0x2a, 0x4e, 0x13, 0x92, 0x66, 0x81,
+	0x6a, 0xda, 0x10, 0xb0, 0x02, 0xb2, 0x0f, 0x68, 0x21, 0x76, 0xad, 0x58, 0xe1, 0x13, 0x1e, 0x80,
+	0x5c, 0x60, 0x7b, 0x73, 0xf4, 0xc3, 0x26, 0xa3, 0xe2, 0x69, 0xe6, 0x44, 0xd6, 0xce, 0x41, 0xf9,
+	0xcb, 0x00, 0x29, 0xb8, 0x6a, 0x12, 0xf7, 0x37, 0x19, 0xbf, 0x00, 0xff, 0xbf, 0x75, 0xfd, 0x1b,
+	0x40, 0xf7, 0x6c, 0xb9, 0xd6, 0xe5, 0xd5, 0x5a, 0x97, 0xdf, 0xd7, 0xba, 0xfc, 0xbc, 0xd1, 0xa5,
+	0xd5, 0x46, 0x97, 0x5e, 0x37, 0xba, 0x74, 0x57, 0x77, 0x31, 0x9f, 0xcc, 0x1d, 0x63, 0x48, 0xa7,
+	0x26, 0xa1, 0x8e, 0x87, 0x9a, 0x36, 0x63, 0x88, 0x33, 0x71, 0x79, 0x26, 0x5f, 0xf8, 0x88, 0x39,
+	0x79, 0x71, 0x80, 0x9d, 0x8f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x25, 0x34, 0xf3, 0x8f, 0xcc, 0x02,
+	0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -98,6 +158,84 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.MailboxRoots) > 0 {
+		for k := range m.MailboxRoots {
+			v := m.MailboxRoots[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintGenesis(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i = encodeVarintGenesis(dAtA, i, uint64(k))
+			i--
+			dAtA[i] = 0x8
+			i = encodeVarintGenesis(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.StateRoots) > 0 {
+		for k := range m.StateRoots {
+			v := m.StateRoots[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintGenesis(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i = encodeVarintGenesis(dAtA, i, uint64(k))
+			i--
+			dAtA[i] = 0x8
+			i = encodeVarintGenesis(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.FinalizedEpochs) > 0 {
+		for k := range m.FinalizedEpochs {
+			v := m.FinalizedEpochs[k]
+			baseI := i
+			{
+				size, err := (&v).MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+			i = encodeVarintGenesis(dAtA, i, uint64(k))
+			i--
+			dAtA[i] = 0x8
+			i = encodeVarintGenesis(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.PendingEpoch != nil {
+		{
+			size, err := m.PendingEpoch.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	{
+		size, err := m.Config.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintGenesis(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -118,6 +256,37 @@ func (m *GenesisState) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = m.Config.Size()
+	n += 1 + l + sovGenesis(uint64(l))
+	if m.PendingEpoch != nil {
+		l = m.PendingEpoch.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
+	if len(m.FinalizedEpochs) > 0 {
+		for k, v := range m.FinalizedEpochs {
+			_ = k
+			_ = v
+			l = v.Size()
+			mapEntrySize := 1 + sovGenesis(uint64(k)) + 1 + l + sovGenesis(uint64(l))
+			n += mapEntrySize + 1 + sovGenesis(uint64(mapEntrySize))
+		}
+	}
+	if len(m.StateRoots) > 0 {
+		for k, v := range m.StateRoots {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + sovGenesis(uint64(k)) + 1 + len(v) + sovGenesis(uint64(len(v)))
+			n += mapEntrySize + 1 + sovGenesis(uint64(mapEntrySize))
+		}
+	}
+	if len(m.MailboxRoots) > 0 {
+		for k, v := range m.MailboxRoots {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + sovGenesis(uint64(k)) + 1 + len(v) + sovGenesis(uint64(len(v)))
+			n += mapEntrySize + 1 + sovGenesis(uint64(mapEntrySize))
+		}
+	}
 	return n
 }
 
@@ -156,6 +325,416 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: GenesisState: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Config", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Config.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingEpoch", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PendingEpoch == nil {
+				m.PendingEpoch = &Epoch{}
+			}
+			if err := m.PendingEpoch.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FinalizedEpochs", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.FinalizedEpochs == nil {
+				m.FinalizedEpochs = make(map[uint64]Epoch)
+			}
+			var mapkey uint64
+			mapvalue := &Epoch{}
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowGenesis
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &Epoch{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipGenesis(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.FinalizedEpochs[mapkey] = *mapvalue
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StateRoots", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.StateRoots == nil {
+				m.StateRoots = make(map[uint64]string)
+			}
+			var mapkey uint64
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowGenesis
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipGenesis(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.StateRoots[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MailboxRoots", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.MailboxRoots == nil {
+				m.MailboxRoots = make(map[uint64]string)
+			}
+			var mapkey uint64
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowGenesis
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowGenesis
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipGenesis(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthGenesis
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.MailboxRoots[mapkey] = mapvalue
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenesis(dAtA[iNdEx:])

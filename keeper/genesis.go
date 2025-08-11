@@ -23,11 +23,77 @@ package keeper
 import (
 	"context"
 
+	"cosmossdk.io/errors"
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/noble-assets/nova/types"
 )
 
-func (k *Keeper) InitGenesis(_ context.Context, _ types.GenesisState) {}
+func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
+	if err := k.setEpochLength(ctx, genesis.Config.EpochLength); err != nil {
+		panic(errors.Wrap(err, "failed to set genesis epoch length"))
+	}
 
-func (k *Keeper) ExportGenesis(_ context.Context) *types.GenesisState {
-	return types.DefaultGenesisState()
+	hookAddress := common.HexToAddress(genesis.Config.HookAddress)
+	if err := k.setHookAddress(ctx, hookAddress); err != nil {
+		panic(errors.Wrap(err, "failed to set genesis hook address"))
+	}
+
+	var pendingEpoch types.Epoch
+	if genesis.PendingEpoch == nil {
+		pendingEpoch = types.Epoch{
+			Number:      0,
+			StartHeight: 0,
+			EndHeight:   genesis.Config.EpochLength,
+		}
+	} else {
+		pendingEpoch = *genesis.PendingEpoch
+	}
+	if err := k.setPendingEpoch(ctx, pendingEpoch); err != nil {
+		panic(errors.Wrap(err, "failed to set genesis pending epoch"))
+	}
+
+	for _, finalizedEpoch := range genesis.FinalizedEpochs {
+		if err := k.setFinalizedEpoch(ctx, finalizedEpoch); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis finalized epoch %d", finalizedEpoch.Number))
+		}
+	}
+
+	for epochNumber, rawStateRoot := range genesis.StateRoots {
+		stateRoot := common.HexToHash(rawStateRoot)
+
+		if err := k.setStateRoot(ctx, epochNumber, stateRoot); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis state root %d", epochNumber))
+		}
+	}
+
+	for epochNumber, rawMailboxRoot := range genesis.MailboxRoots {
+		mailboxRoot := common.HexToHash(rawMailboxRoot)
+
+		if err := k.setMailboxRoot(ctx, epochNumber, mailboxRoot); err != nil {
+			panic(errors.Wrapf(err, "failed to set genesis mailbox root %d", epochNumber))
+		}
+	}
+}
+
+func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
+	epochLength, _ := k.GetEpochLength(ctx)
+	hookAddress, _ := k.GetHookAddress(ctx)
+	config := types.Config{
+		EpochLength: epochLength,
+		HookAddress: hookAddress.String(),
+	}
+
+	pendingEpoch, _ := k.GetPendingEpoch(ctx)
+	finalizedEpochs, _ := k.getFinalizedEpochs(ctx)
+	stateRoots, _ := k.getStateRoots(ctx)
+	mailboxRoots, _ := k.getMailboxRoots(ctx)
+
+	return &types.GenesisState{
+		Config:          config,
+		PendingEpoch:    &pendingEpoch,
+		FinalizedEpochs: finalizedEpochs,
+		StateRoots:      stateRoots,
+		MailboxRoots:    mailboxRoots,
+	}
 }

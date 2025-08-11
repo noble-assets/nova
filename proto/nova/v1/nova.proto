@@ -3,3 +3,18 @@ syntax = "proto3";
 package nova.v1;
 
 option go_package = "github.com/noble-assets/nova/types";
+
+message Config {
+  // epoch_length defines the length on an epoch, in Noble AppLayer blocks.
+  uint64 epoch_length = 1;
+
+  // hook_address defines the contract address of the Hyperlane Merkle Tree
+  // Hook deployed on the Noble Applayer, used by the canonical mailbox.
+  string hook_address = 2;
+}
+
+message Epoch {
+  uint64 number = 1;
+  uint64 start_height = 2;
+  uint64 end_height = 3;
+}

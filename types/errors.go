@@ -20,22 +20,9 @@
 
 package types
 
-import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+import "cosmossdk.io/errors"
+
+var (
+	ErrInvalidRequest   = errors.Register(ModuleName, 0, "invalid request")
+	ErrInvalidAuthority = errors.Register(ModuleName, 1, "invalid authority")
 )
-
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
-}
-
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-}

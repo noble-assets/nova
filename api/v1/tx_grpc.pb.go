@@ -7,7 +7,10 @@
 package novav1
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,10 +18,17 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
+const (
+	Msg_SetEpochLength_FullMethodName = "/nova.v1.Msg/SetEpochLength"
+	Msg_SetHookAddress_FullMethodName = "/nova.v1.Msg/SetHookAddress"
+)
+
 // MsgClient is the client API for Msg service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MsgClient interface {
+	SetEpochLength(ctx context.Context, in *MsgSetEpochLength, opts ...grpc.CallOption) (*MsgSetEpochLengthResponse, error)
+	SetHookAddress(ctx context.Context, in *MsgSetHookAddress, opts ...grpc.CallOption) (*MsgSetHookAddressResponse, error)
 }
 
 type msgClient struct {
@@ -29,10 +39,32 @@ func NewMsgClient(cc grpc.ClientConnInterface) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) SetEpochLength(ctx context.Context, in *MsgSetEpochLength, opts ...grpc.CallOption) (*MsgSetEpochLengthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetEpochLengthResponse)
+	err := c.cc.Invoke(ctx, Msg_SetEpochLength_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetHookAddress(ctx context.Context, in *MsgSetHookAddress, opts ...grpc.CallOption) (*MsgSetHookAddressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetHookAddressResponse)
+	err := c.cc.Invoke(ctx, Msg_SetHookAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
 type MsgServer interface {
+	SetEpochLength(context.Context, *MsgSetEpochLength) (*MsgSetEpochLengthResponse, error)
+	SetHookAddress(context.Context, *MsgSetHookAddress) (*MsgSetHookAddressResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -43,6 +75,12 @@ type MsgServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMsgServer struct{}
 
+func (UnimplementedMsgServer) SetEpochLength(context.Context, *MsgSetEpochLength) (*MsgSetEpochLengthResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetEpochLength not implemented")
+}
+func (UnimplementedMsgServer) SetHookAddress(context.Context, *MsgSetHookAddress) (*MsgSetHookAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetHookAddress not implemented")
+}
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 func (UnimplementedMsgServer) testEmbeddedByValue()             {}
 
@@ -64,13 +102,58 @@ func RegisterMsgServer(s grpc.ServiceRegistrar, srv MsgServer) {
 	s.RegisterService(&Msg_ServiceDesc, srv)
 }
 
+func _Msg_SetEpochLength_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetEpochLength)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetEpochLength(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetEpochLength_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetEpochLength(ctx, req.(*MsgSetEpochLength))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetHookAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetHookAddress)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetHookAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetHookAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetHookAddress(ctx, req.(*MsgSetHookAddress))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Msg_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "nova.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "nova/v1/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SetEpochLength",
+			Handler:    _Msg_SetEpochLength_Handler,
+		},
+		{
+			MethodName: "SetHookAddress",
+			Handler:    _Msg_SetHookAddress_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "nova/v1/tx.proto",
 }

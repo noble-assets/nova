@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright (C) 2025, NASD Inc. All rights reserved.
+// Use of this software is governed by the Business Source License included
+// in the LICENSE file of this repository and at www.mariadb.com/bsl11.
+//
+// ANY USE OF THE LICENSED WORK IN VIOLATION OF THIS LICENSE WILL AUTOMATICALLY
+// TERMINATE YOUR RIGHTS UNDER THIS LICENSE FOR THE CURRENT AND ALL OTHER
+// VERSIONS OF THE LICENSED WORK.
+//
+// THIS LICENSE DOES NOT GRANT YOU ANY RIGHT IN ANY TRADEMARK OR LOGO OF
+// LICENSOR OR ITS AFFILIATES (PROVIDED THAT YOU MAY USE A TRADEMARK OR LOGO OF
+// LICENSOR AS EXPRESSLY REQUIRED BY THIS LICENSE).
+//
+// TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED WORK IS PROVIDED ON
+// AN "AS IS" BASIS. LICENSOR HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS,
+// EXPRESS OR IMPLIED, INCLUDING (WITHOUT LIMITATION) WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
+// TITLE.
+
+package nova
+
+import (
+	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
+	"github.com/spf13/cobra"
+)
+
+const (
+	DefaultRPCAddress = "http://localhost:8545"
+	FlagRPCAddress    = "nova.rpc-address"
+)
+
+// AppendConfig appends the Nova configuration to the Cosmos SDK app.toml
+func AppendConfig(config *serverconfig.Config) (customAppTemplate string, customAppConfig interface{}) {
+	type NovaConfig struct {
+		RPCAddress string `mapstructure:"rpc-address"`
+	}
+
+	type CustomAppConfig struct {
+		serverconfig.Config
+
+		NovaConfig NovaConfig `mapstructure:"nova"`
+	}
+
+	customAppTemplate = serverconfig.DefaultConfigTemplate + `
+###############################################################################
+###                                   Nova                                  ###
+###############################################################################
+
+[nova]
+
+# The RPC address used to communicate with the local AppLayer node.
+rpc-address = "{{ .NovaConfig.RPCAddress }}"
+`
+
+	defaultNovaConfig := NovaConfig{RPCAddress: DefaultRPCAddress}
+	customAppConfig = CustomAppConfig{Config: *config, NovaConfig: defaultNovaConfig}
+
+	return
+}
+
+// AddFlags adds the Nova flags to the default Cosmos SDK start command.
+func AddFlags(cmd *cobra.Command) {
+	cmd.Flags().String(FlagRPCAddress, DefaultRPCAddress, "Nova's RPC Address")
+}

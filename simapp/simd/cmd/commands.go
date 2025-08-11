@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/noble-assets/nova"
 	"github.com/noble-assets/nova/simapp"
 )
 
@@ -41,6 +42,7 @@ func initRootCmd(rootCmd *cobra.Command, txConfig client.TxConfig, basicManager 
 
 	server.AddCommands(rootCmd, simapp.DefaultNodeHome, newApp, appExport, func(startCmd *cobra.Command) {
 		crisis.AddModuleInitFlags(startCmd)
+		nova.AddFlags(startCmd)
 	})
 
 	// add keybase, auxiliary RPC, query, genesis, and tx child commands
