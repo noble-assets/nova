@@ -18,30 +18,28 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package ism
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	"context"
 
-	"github.com/noble-assets/nova/types/ism"
+	types "github.com/noble-assets/nova/types/ism"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	ism.RegisterLegacyAminoCodec(cdc)
+var _ types.QueryServer = &queryServer{}
 
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
+type queryServer struct {
+	*Keeper
 }
 
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	ism.RegisterInterfaces(registry)
+func NewQueryServer(keeper *Keeper) types.QueryServer {
+	return &queryServer{Keeper: keeper}
+}
 
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
+func (s queryServer) Paused(ctx context.Context, req *types.QueryPaused) (*types.QueryPausedResponse, error) {
+	if req == nil {
+		return nil, types.ErrInvalidRequest
+	}
 
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+	return &types.QueryPausedResponse{Paused: s.GetPaused(ctx)}, nil
 }

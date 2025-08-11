@@ -30,6 +30,8 @@ import (
 )
 
 func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
+	// TODO: Figure out how to init ISM submodule genesis.
+
 	if err := k.setEpochLength(ctx, genesis.Config.EpochLength); err != nil {
 		panic(errors.Wrap(err, "failed to set genesis epoch length"))
 	}
@@ -90,6 +92,7 @@ func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 	mailboxRoots, _ := k.getMailboxRoots(ctx)
 
 	return &types.GenesisState{
+		// TODO: Figure out how to export ISM submodule genesis.
 		Config:          config,
 		PendingEpoch:    &pendingEpoch,
 		FinalizedEpochs: finalizedEpochs,

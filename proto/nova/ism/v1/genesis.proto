@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package nova.ism.v1;
+
+option go_package = "github.com/noble-assets/nova/types/ism";
+
+// GenesisState defines the genesis state of the Nova ISM submodule.
+message GenesisState {
+  bool paused = 1;
+}

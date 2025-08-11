@@ -19,6 +19,8 @@ import (
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/core"
+	_ "github.com/bcp-innovations/hyperlane-cosmos/x/warp"
 	_ "github.com/cosmos/cosmos-sdk/x/auth"
 	_ "github.com/cosmos/cosmos-sdk/x/auth/tx/config"
 	_ "github.com/cosmos/cosmos-sdk/x/bank"
@@ -33,6 +35,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	// Hyperlane Modules
+	hyperlanekeeper "github.com/bcp-innovations/hyperlane-cosmos/x/core/keeper"
+	warpkeeper "github.com/bcp-innovations/hyperlane-cosmos/x/warp/keeper"
 	// Custom Modules
 	novakeeper "github.com/noble-assets/nova/keeper"
 )
@@ -62,6 +67,9 @@ type SimApp struct {
 	BankKeeper      bankkeeper.Keeper
 	ConsensusKeeper consensuskeeper.Keeper
 	StakingKeeper   *stakingkeeper.Keeper
+	// HyperlaneKeeper
+	HyperlaneKeeper *hyperlanekeeper.Keeper
+	WarpKeeper      warpkeeper.Keeper
 	// Custom Modules
 	NovaKeeper *novakeeper.Keeper
 }
@@ -120,6 +128,9 @@ func NewSimApp(
 		&app.BankKeeper,
 		&app.ConsensusKeeper,
 		&app.StakingKeeper,
+		// Hyperlane Modules
+		&app.HyperlaneKeeper,
+		&app.WarpKeeper,
 		// Custom Modules
 		&app.NovaKeeper,
 	); err != nil {
