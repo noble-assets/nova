@@ -13,7 +13,7 @@ export default createConfig({
     MerkleTreeHook: {
       chain: "anvil",
       abi: MerkleTreeHookAbi,
-      address: "0x0000000000000000000000000000000000000000",
+      address: "0xb19b36b1456E65E3A6D514D3F715f204BD59f431",
       startBlock: 0,
     },
   },

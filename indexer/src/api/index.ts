@@ -29,12 +29,12 @@ app.use("/prove/:messageId", async (ctx) => {
       tree.insert(message.id);
     }
   
-    const index = messages.find((m) => m.id === messageId)?.index;
-    if (!index) {
+    const message = messages.find((m) => m.id === messageId);
+    if (!message) {
       return ctx.json({ error: "unknown message id" }, 404);
     }
   
-    return ctx.json(tree.createProof(index));
+    return ctx.json(tree.createProof(message.index));
   });
 
 export default app;

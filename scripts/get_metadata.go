@@ -18,52 +18,39 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package ism
+package main
 
 import (
-	"encoding/binary"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 
-	"cosmossdk.io/errors"
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+	"github.com/ethereum/go-ethereum/common"
+
+	types "github.com/noble-assets/nova/types/ism"
 )
 
-type Metadata struct {
-	Index uint32
-	Proof [32][32]byte
+type Response struct {
+	Siblings  [][]string `json:"siblings"`
+	LeafIndex int        `json:"leafIndex"`
 }
 
-func ParseMetadata(bz []byte) (Metadata, error) {
-	if len(bz) != 1028 {
-		return Metadata{}, errors.Wrap(ErrInvalidMetadata, "must be 1028 bytes")
-	}
+func main() {
+	raw, _ := http.Get("http://localhost:42069/prove/0xfc5d4c1f93dc68b02f4779ccf4988e1d1655a10b09dbe25470071ddbe2415a23")
+	body, _ := io.ReadAll(raw.Body)
 
-	offset := 0
-
-	index := binary.BigEndian.Uint32(bz[offset : offset+4])
-	offset += 4
+	var res Response
+	_ = json.Unmarshal(body, &res)
 
 	var proof [32][32]byte
 	for i := 0; i < 32; i++ {
-		copy(proof[i][:], bz[offset:offset+32])
-		offset += 32
+		proof[i], _ = hyperlaneutil.DecodeHexAddress(res.Siblings[i][0])
 	}
 
-	return Metadata{
-		Index: index,
+	fmt.Println("0x" + common.Bytes2Hex(types.Metadata{
+		Index: uint32(res.LeafIndex),
 		Proof: proof,
-	}, nil
-}
-
-func (m Metadata) Bytes() []byte {
-	bz := make([]byte, 1028)
-	offset := 0
-
-	binary.BigEndian.PutUint32(bz, m.Index)
-	offset += 4
-
-	for i := 0; i < 32; i++ {
-		copy(bz[offset:offset+32], m.Proof[i][:])
-		offset += 32
-	}
-
-	return bz
+	}.Bytes()))
 }
