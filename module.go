@@ -135,10 +135,12 @@ func (m AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.Raw
 	cdc.MustUnmarshalJSON(bz, &genesis)
 
 	m.keeper.InitGenesis(ctx, genesis)
+	m.ismKeeper.InitGenesis(ctx, genesis.Ism)
 }
 
 func (m AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	genesis := m.keeper.ExportGenesis(ctx)
+	genesis.Ism = m.ismKeeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(genesis)
 }
 
@@ -314,7 +316,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	k := keeper.NewKeeper(authority.String(), in.Codec, in.StoreService, in.EventService, in.Logger, rpcAddress, in.ValidatorStore)
-	ismKeeper := ismkeeper.NewKeeper(authority.String(), in.StoreService, in.EventService, in.Logger, in.HyperlaneKeeper)
+	ismKeeper := ismkeeper.NewKeeper(authority.String(), in.StoreService, in.EventService, in.Logger, k, in.HyperlaneKeeper)
 	m := NewAppModule(k, ismKeeper)
 
 	return ModuleOutputs{Keeper: k, IsmKeeper: ismKeeper, Module: m}

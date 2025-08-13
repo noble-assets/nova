@@ -25,4 +25,6 @@ import "cosmossdk.io/errors"
 var (
 	ErrInvalidRequest   = errors.Register(SubmoduleName, 0, "invalid request")
 	ErrInvalidAuthority = errors.Register(SubmoduleName, 1, "invalid authority")
+	ErrInvalidMetadata  = errors.Register(SubmoduleName, 2, "invalid metadata")
+	ErrUnableToVerify   = errors.Register(SubmoduleName, 3, "unable to verify")
 )

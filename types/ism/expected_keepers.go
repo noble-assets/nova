@@ -20,7 +20,16 @@
 
 package ism
 
-import hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+import (
+	"context"
+
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+	"github.com/ethereum/go-ethereum/common"
+)
+
+type CoreKeeper interface {
+	GetLatestMailboxRoot(ctx context.Context) (common.Hash, error)
+}
 
 type HyperlaneKeeper interface {
 	IsmRouter() *hyperlaneutil.Router[hyperlaneutil.InterchainSecurityModule]

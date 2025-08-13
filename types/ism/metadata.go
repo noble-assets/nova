@@ -20,10 +20,35 @@
 
 package ism
 
-import hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+import (
+	"encoding/binary"
 
-const SubmoduleName = "nova/ism"
+	"cosmossdk.io/errors"
+)
 
-var ExpectedId, _ = hyperlaneutil.DecodeHexAddress("0x726f757465725f69736d00000000000000000000000000ff0000000000000000")
+type Metadata struct {
+	Index uint32
+	Proof [32][32]byte
+}
 
-var PausedKey = []byte("ism/paused")
+func ParseMetadata(bz []byte) (Metadata, error) {
+	if len(bz) != 1028 {
+		return Metadata{}, errors.Wrap(ErrInvalidMetadata, "must be 1028 bytes")
+	}
+
+	offset := 0
+
+	index := binary.BigEndian.Uint32(bz[offset : offset+4])
+	offset += 4
+
+	var proof [32][32]byte
+	for i := 0; i < 32; i++ {
+		copy(proof[i][:], bz[offset:offset+32])
+		offset += 32
+	}
+
+	return Metadata{
+		Index: index,
+		Proof: proof,
+	}, nil
+}

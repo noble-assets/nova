@@ -34,10 +34,10 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 	}
 }
 
-func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
+func (k *Keeper) ExportGenesis(ctx context.Context) types.GenesisState {
 	paused := k.GetPaused(ctx)
 
-	return &types.GenesisState{
+	return types.GenesisState{
 		Paused: paused,
 	}
 }

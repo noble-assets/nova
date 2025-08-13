@@ -21,11 +21,13 @@
 package ism
 
 import (
+	"bytes"
 	"context"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/event"
 	"cosmossdk.io/core/store"
+	"cosmossdk.io/errors"
 	"cosmossdk.io/log"
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 
@@ -39,11 +41,12 @@ type Keeper struct {
 
 	eventService event.Service
 	logger       log.Logger
+	coreKeeper   types.CoreKeeper
 
 	paused collections.Item[bool]
 }
 
-func NewKeeper(authority string, storeService store.KVStoreService, eventService event.Service, logger log.Logger, hyperlaneKeeper types.HyperlaneKeeper) *Keeper {
+func NewKeeper(authority string, storeService store.KVStoreService, eventService event.Service, logger log.Logger, coreKeeper types.CoreKeeper, hyperlaneKeeper types.HyperlaneKeeper) *Keeper {
 	builder := collections.NewSchemaBuilder(storeService)
 
 	keeper := &Keeper{
@@ -51,6 +54,7 @@ func NewKeeper(authority string, storeService store.KVStoreService, eventService
 
 		eventService: eventService,
 		logger:       logger.With("module", types.SubmoduleName),
+		coreKeeper:   coreKeeper,
 
 		paused: collections.NewItem(builder, types.PausedKey, "ism_paused", collections.BoolValue),
 	}
@@ -70,13 +74,28 @@ func NewKeeper(authority string, storeService store.KVStoreService, eventService
 }
 
 // Exists implements the expected Hyperlane InterchainSecurityModule interface.
-func (k *Keeper) Exists(ctx context.Context, ismId hyperlaneutil.HexAddress) (bool, error) {
-	// TODO implement me
-	panic("implement me")
+func (k *Keeper) Exists(_ context.Context, ismId hyperlaneutil.HexAddress) (bool, error) {
+	return ismId.Equal(types.ExpectedId), nil
 }
 
 // Verify implements the expected Hyperlane InterchainSecurityModule interface.
-func (k *Keeper) Verify(ctx context.Context, ismId hyperlaneutil.HexAddress, metadata []byte, message hyperlaneutil.HyperlaneMessage) (bool, error) {
-	// TODO implement me
-	panic("implement me")
+func (k *Keeper) Verify(ctx context.Context, _ hyperlaneutil.HexAddress, metadataBz []byte, message hyperlaneutil.HyperlaneMessage) (bool, error) {
+	// TODO: Do we need to verify ismId again?
+	if k.GetPaused(ctx) {
+		return false, errors.Wrap(types.ErrUnableToVerify, "paused")
+	}
+
+	metadata, err := types.ParseMetadata(metadataBz)
+	if err != nil {
+		return false, err
+	}
+
+	root := hyperlaneutil.BranchRoot(message.Id(), metadata.Proof, metadata.Index)
+
+	expectedRoot, err := k.coreKeeper.GetLatestMailboxRoot(ctx)
+	if err != nil {
+		return false, errors.Wrap(err, "unable to get latest mailbox root from state")
+	}
+
+	return bytes.Equal(root[:], expectedRoot.Bytes()), nil
 }
