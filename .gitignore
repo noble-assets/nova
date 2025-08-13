@@ -1,5 +1,6 @@
 .idea
 .nova
 build
+node_modules
 go.work
 go.work.sum
