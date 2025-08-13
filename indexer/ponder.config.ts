@@ -1,20 +1,20 @@
 import { createConfig } from "ponder";
 
-import { ExampleContractAbi } from "./abis/ExampleContractAbi";
+import MerkleTreeHookAbi from "./abis/MerkleTreeHookAbi";
 
 export default createConfig({
   chains: {
-    mainnet: {
-      id: 1,
-      rpc: process.env.PONDER_RPC_URL_1!,
+    anvil: {
+      id: 31337,
+      rpc: "http://localhost:8545",
     },
   },
   contracts: {
-    ExampleContract: {
-      chain: "mainnet",
-      abi: ExampleContractAbi,
+    MerkleTreeHook: {
+      chain: "anvil",
+      abi: MerkleTreeHookAbi,
       address: "0x0000000000000000000000000000000000000000",
-      startBlock: 1234567,
+      startBlock: 0,
     },
   },
 });
