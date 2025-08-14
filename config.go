@@ -30,19 +30,11 @@ const (
 	FlagRPCAddress    = "nova.rpc-address"
 )
 
-// AppendConfig appends the Nova configuration to the Cosmos SDK app.toml
-func AppendConfig(config *serverconfig.Config) (customAppTemplate string, customAppConfig interface{}) {
-	type NovaConfig struct {
-		RPCAddress string `mapstructure:"rpc-address"`
-	}
+type Config struct {
+	RPCAddress string `mapstructure:"rpc-address"`
+}
 
-	type CustomAppConfig struct {
-		serverconfig.Config
-
-		NovaConfig NovaConfig `mapstructure:"nova"`
-	}
-
-	customAppTemplate = serverconfig.DefaultConfigTemplate + `
+const ConfigTemplate = `
 ###############################################################################
 ###                                   Nova                                  ###
 ###############################################################################
@@ -53,7 +45,17 @@ func AppendConfig(config *serverconfig.Config) (customAppTemplate string, custom
 rpc-address = "{{ .NovaConfig.RPCAddress }}"
 `
 
-	defaultNovaConfig := NovaConfig{RPCAddress: DefaultRPCAddress}
+// AppendConfig appends the Nova configuration to the Cosmos SDK app.toml
+func AppendConfig(config *serverconfig.Config) (customAppTemplate string, customAppConfig interface{}) {
+	type CustomAppConfig struct {
+		serverconfig.Config
+
+		NovaConfig Config `mapstructure:"nova"`
+	}
+
+	customAppTemplate = serverconfig.DefaultConfigTemplate + ConfigTemplate
+
+	defaultNovaConfig := Config{RPCAddress: DefaultRPCAddress}
 	customAppConfig = CustomAppConfig{Config: *config, NovaConfig: defaultNovaConfig}
 
 	return
