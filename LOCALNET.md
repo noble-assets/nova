@@ -36,14 +36,14 @@ This repository contains everything needed to spin up a complete local environme
       (9) 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
       ```
 3. From inside `scripts`, deploy all required Hyperlane contracts: `forge script DeployHyperlane.s.sol --rpc-url http://localhost:8545 --private-key 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6 --broadcast`
-   1. We are using the private key of the first default Anvil account!
+   1. We are using the private key of default Anvil account (9).
    2. Note that you should see the following logs:
       ```
       Mailbox: 0xA15BB66138824a1c7167f5E85b957d04Dd34E468
       MerkleTreeHook: 0xb19b36b1456E65E3A6D514D3F715f204BD59f431
       HypNative: 0xeD1DB453C3156Ff3155a97AD217b3087D5Dc5f6E
       ```
-4. From inside `indexer`, start the indexer that generates proofs of Hyperlane message inclusion: `bun dev`
+4. From inside `indexer`, install deps and start the indexer that generates proofs of Hyperlane message inclusion: `bun install && bun dev`
 
 ## Submitting A Transfer
 
