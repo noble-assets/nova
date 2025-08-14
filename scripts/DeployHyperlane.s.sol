@@ -9,6 +9,9 @@ import {HypNative} from "@hyperlane/token/HypNative.sol";
 import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract DeployHyperlaneScript is Script {
+    // Anvil Default Account #1 - 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+    address constant PROXY_ADMIN = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+
     function setUp() public {}
 
     function run() public {
@@ -16,7 +19,7 @@ contract DeployHyperlaneScript is Script {
 
         Mailbox mailboxImplementation = new Mailbox(uint32(block.chainid));
         TransparentUpgradeableProxy mailboxProxy = new TransparentUpgradeableProxy(
-            address(mailboxImplementation), 0x70997970C51812dc3A010C7d01b50e0d17dc79C8, ""
+            address(mailboxImplementation), PROXY_ADMIN, ""
         );
         Mailbox mailbox = Mailbox(address(mailboxProxy));
         console.log("Mailbox: %s", address(mailbox));
@@ -29,7 +32,7 @@ contract DeployHyperlaneScript is Script {
         HypNative nativeImplementation = new HypNative(1, address(mailbox));
         TransparentUpgradeableProxy nativeProxy = new TransparentUpgradeableProxy(
             address(nativeImplementation),
-            0x70997970C51812dc3A010C7d01b50e0d17dc79C8,
+            PROXY_ADMIN,
             abi.encodeWithSelector(HypNative.initialize.selector, address(0), address(0), msg.sender)
         );
         HypNative native = HypNative(payable(address(nativeProxy)));

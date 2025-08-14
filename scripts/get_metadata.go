@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 	"github.com/ethereum/go-ethereum/common"
@@ -38,11 +39,27 @@ type Response struct {
 }
 
 func main() {
-	raw, _ := http.Get("http://localhost:42069/prove/0xfc5d4c1f93dc68b02f4779ccf4988e1d1655a10b09dbe25470071ddbe2415a23")
-	body, _ := io.ReadAll(raw.Body)
+	if len(os.Args) < 2 {
+		panic("Usage: go run get_metadata.go <messageId>")
+	}
+	messageId := os.Args[1]
+
+	raw, err := http.Get(fmt.Sprintf("http://localhost:42069/prove/%s", messageId))
+	if err != nil {
+		panic(fmt.Sprintf("Failed to fetch proof: %v", err))
+	}
+	defer raw.Body.Close()
+
+	body, err := io.ReadAll(raw.Body)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to read proof: %v", err))
+	}
 
 	var res Response
-	_ = json.Unmarshal(body, &res)
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to unmarshal proof: %v", err))
+	}
 
 	var proof [32][32]byte
 	for i := 0; i < 32; i++ {

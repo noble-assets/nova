@@ -79,8 +79,10 @@ func (k *Keeper) Exists(_ context.Context, ismId hyperlaneutil.HexAddress) (bool
 }
 
 // Verify implements the expected Hyperlane InterchainSecurityModule interface.
-func (k *Keeper) Verify(ctx context.Context, _ hyperlaneutil.HexAddress, metadataBz []byte, message hyperlaneutil.HyperlaneMessage) (bool, error) {
-	// TODO: Do we need to verify ismId again?
+func (k *Keeper) Verify(ctx context.Context, ismId hyperlaneutil.HexAddress, metadataBz []byte, message hyperlaneutil.HyperlaneMessage) (bool, error) {
+	if !ismId.Equal(types.ExpectedId) {
+		return false, errors.Wrap(types.ErrUnableToVerify, "invalid ism id")
+	}
 	if k.GetPaused(ctx) {
 		return false, errors.Wrap(types.ErrUnableToVerify, "paused")
 	}

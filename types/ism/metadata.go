@@ -26,14 +26,18 @@ import (
 	"cosmossdk.io/errors"
 )
 
+// MetadataSize defines the byte encoded size of Metadata.
+// index size + (# of proof leaves * leaf size)
+const MetadataSize = 4 + 32*32
+
 type Metadata struct {
 	Index uint32
 	Proof [32][32]byte
 }
 
 func ParseMetadata(bz []byte) (Metadata, error) {
-	if len(bz) != 1028 {
-		return Metadata{}, errors.Wrap(ErrInvalidMetadata, "must be 1028 bytes")
+	if len(bz) != MetadataSize {
+		return Metadata{}, errors.Wrapf(ErrInvalidMetadata, "length %d != %d", len(bz), MetadataSize)
 	}
 
 	offset := 0
@@ -54,10 +58,11 @@ func ParseMetadata(bz []byte) (Metadata, error) {
 }
 
 func (m Metadata) Bytes() []byte {
-	bz := make([]byte, 1028)
+	bz := make([]byte, MetadataSize)
+
 	offset := 0
 
-	binary.BigEndian.PutUint32(bz, m.Index)
+	binary.BigEndian.PutUint32(bz[offset:], m.Index)
 	offset += 4
 
 	for i := 0; i < 32; i++ {
