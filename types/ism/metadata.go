@@ -18,30 +18,57 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package ism
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	"encoding/binary"
 
-	"github.com/noble-assets/nova/types/ism"
+	"cosmossdk.io/errors"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	ism.RegisterLegacyAminoCodec(cdc)
+// MetadataSize defines the byte encoded size of Metadata.
+// index size + (# of proof leaves * leaf size)
+const MetadataSize = 4 + 32*32
 
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
+type Metadata struct {
+	Index uint32
+	Proof [32][32]byte
 }
 
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	ism.RegisterInterfaces(registry)
+func ParseMetadata(bz []byte) (Metadata, error) {
+	if len(bz) != MetadataSize {
+		return Metadata{}, errors.Wrapf(ErrInvalidMetadata, "length %d != %d", len(bz), MetadataSize)
+	}
 
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
+	offset := 0
 
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+	index := binary.BigEndian.Uint32(bz[offset : offset+4])
+	offset += 4
+
+	var proof [32][32]byte
+	for i := 0; i < 32; i++ {
+		copy(proof[i][:], bz[offset:offset+32])
+		offset += 32
+	}
+
+	return Metadata{
+		Index: index,
+		Proof: proof,
+	}, nil
+}
+
+func (m Metadata) Bytes() []byte {
+	bz := make([]byte, MetadataSize)
+
+	offset := 0
+
+	binary.BigEndian.PutUint32(bz[offset:], m.Index)
+	offset += 4
+
+	for i := 0; i < 32; i++ {
+		copy(bz[offset:offset+32], m.Proof[i][:])
+		offset += 32
+	}
+
+	return bz
 }

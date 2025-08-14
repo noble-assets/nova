@@ -9,6 +9,7 @@ require (
 	cosmossdk.io/log v1.4.1
 	cosmossdk.io/store v1.1.1
 	cosmossdk.io/tools/confix v0.1.2
+	github.com/bcp-innovations/hyperlane-cosmos v1.0.1
 	github.com/cometbft/cometbft v0.38.17
 	github.com/cosmos/cosmos-db v1.1.1
 	github.com/cosmos/cosmos-sdk v0.50.13

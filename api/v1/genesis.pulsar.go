@@ -5,6 +5,7 @@ import (
 	fmt "fmt"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
+	v1 "github.com/noble-assets/nova/api/ism/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoiface "google.golang.org/protobuf/runtime/protoiface"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -14,100 +15,10 @@ import (
 	sync "sync"
 )
 
-var _ protoreflect.Map = (*_GenesisState_3_map)(nil)
-
-type _GenesisState_3_map struct {
-	m *map[uint64]*Epoch
-}
-
-func (x *_GenesisState_3_map) Len() int {
-	if x.m == nil {
-		return 0
-	}
-	return len(*x.m)
-}
-
-func (x *_GenesisState_3_map) Range(f func(protoreflect.MapKey, protoreflect.Value) bool) {
-	if x.m == nil {
-		return
-	}
-	for k, v := range *x.m {
-		mapKey := (protoreflect.MapKey)(protoreflect.ValueOfUint64(k))
-		mapValue := protoreflect.ValueOfMessage(v.ProtoReflect())
-		if !f(mapKey, mapValue) {
-			break
-		}
-	}
-}
-
-func (x *_GenesisState_3_map) Has(key protoreflect.MapKey) bool {
-	if x.m == nil {
-		return false
-	}
-	keyUnwrapped := key.Uint()
-	concreteValue := keyUnwrapped
-	_, ok := (*x.m)[concreteValue]
-	return ok
-}
-
-func (x *_GenesisState_3_map) Clear(key protoreflect.MapKey) {
-	if x.m == nil {
-		return
-	}
-	keyUnwrapped := key.Uint()
-	concreteKey := keyUnwrapped
-	delete(*x.m, concreteKey)
-}
-
-func (x *_GenesisState_3_map) Get(key protoreflect.MapKey) protoreflect.Value {
-	if x.m == nil {
-		return protoreflect.Value{}
-	}
-	keyUnwrapped := key.Uint()
-	concreteKey := keyUnwrapped
-	v, ok := (*x.m)[concreteKey]
-	if !ok {
-		return protoreflect.Value{}
-	}
-	return protoreflect.ValueOfMessage(v.ProtoReflect())
-}
-
-func (x *_GenesisState_3_map) Set(key protoreflect.MapKey, value protoreflect.Value) {
-	if !key.IsValid() || !value.IsValid() {
-		panic("invalid key or value provided")
-	}
-	keyUnwrapped := key.Uint()
-	concreteKey := keyUnwrapped
-	valueUnwrapped := value.Message()
-	concreteValue := valueUnwrapped.Interface().(*Epoch)
-	(*x.m)[concreteKey] = concreteValue
-}
-
-func (x *_GenesisState_3_map) Mutable(key protoreflect.MapKey) protoreflect.Value {
-	keyUnwrapped := key.Uint()
-	concreteKey := keyUnwrapped
-	v, ok := (*x.m)[concreteKey]
-	if ok {
-		return protoreflect.ValueOfMessage(v.ProtoReflect())
-	}
-	newValue := new(Epoch)
-	(*x.m)[concreteKey] = newValue
-	return protoreflect.ValueOfMessage(newValue.ProtoReflect())
-}
-
-func (x *_GenesisState_3_map) NewValue() protoreflect.Value {
-	v := new(Epoch)
-	return protoreflect.ValueOfMessage(v.ProtoReflect())
-}
-
-func (x *_GenesisState_3_map) IsValid() bool {
-	return x.m != nil
-}
-
 var _ protoreflect.Map = (*_GenesisState_4_map)(nil)
 
 type _GenesisState_4_map struct {
-	m *map[uint64]string
+	m *map[uint64]*Epoch
 }
 
 func (x *_GenesisState_4_map) Len() int {
@@ -123,7 +34,7 @@ func (x *_GenesisState_4_map) Range(f func(protoreflect.MapKey, protoreflect.Val
 	}
 	for k, v := range *x.m {
 		mapKey := (protoreflect.MapKey)(protoreflect.ValueOfUint64(k))
-		mapValue := protoreflect.ValueOfString(v)
+		mapValue := protoreflect.ValueOfMessage(v.ProtoReflect())
 		if !f(mapKey, mapValue) {
 			break
 		}
@@ -159,7 +70,7 @@ func (x *_GenesisState_4_map) Get(key protoreflect.MapKey) protoreflect.Value {
 	if !ok {
 		return protoreflect.Value{}
 	}
-	return protoreflect.ValueOfString(v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
 }
 
 func (x *_GenesisState_4_map) Set(key protoreflect.MapKey, value protoreflect.Value) {
@@ -168,18 +79,26 @@ func (x *_GenesisState_4_map) Set(key protoreflect.MapKey, value protoreflect.Va
 	}
 	keyUnwrapped := key.Uint()
 	concreteKey := keyUnwrapped
-	valueUnwrapped := value.String()
-	concreteValue := valueUnwrapped
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*Epoch)
 	(*x.m)[concreteKey] = concreteValue
 }
 
 func (x *_GenesisState_4_map) Mutable(key protoreflect.MapKey) protoreflect.Value {
-	panic("should not call Mutable on protoreflect.Map whose value is not of type protoreflect.Message")
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	v, ok := (*x.m)[concreteKey]
+	if ok {
+		return protoreflect.ValueOfMessage(v.ProtoReflect())
+	}
+	newValue := new(Epoch)
+	(*x.m)[concreteKey] = newValue
+	return protoreflect.ValueOfMessage(newValue.ProtoReflect())
 }
 
 func (x *_GenesisState_4_map) NewValue() protoreflect.Value {
-	v := ""
-	return protoreflect.ValueOfString(v)
+	v := new(Epoch)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
 }
 
 func (x *_GenesisState_4_map) IsValid() bool {
@@ -268,8 +187,91 @@ func (x *_GenesisState_5_map) IsValid() bool {
 	return x.m != nil
 }
 
+var _ protoreflect.Map = (*_GenesisState_6_map)(nil)
+
+type _GenesisState_6_map struct {
+	m *map[uint64]string
+}
+
+func (x *_GenesisState_6_map) Len() int {
+	if x.m == nil {
+		return 0
+	}
+	return len(*x.m)
+}
+
+func (x *_GenesisState_6_map) Range(f func(protoreflect.MapKey, protoreflect.Value) bool) {
+	if x.m == nil {
+		return
+	}
+	for k, v := range *x.m {
+		mapKey := (protoreflect.MapKey)(protoreflect.ValueOfUint64(k))
+		mapValue := protoreflect.ValueOfString(v)
+		if !f(mapKey, mapValue) {
+			break
+		}
+	}
+}
+
+func (x *_GenesisState_6_map) Has(key protoreflect.MapKey) bool {
+	if x.m == nil {
+		return false
+	}
+	keyUnwrapped := key.Uint()
+	concreteValue := keyUnwrapped
+	_, ok := (*x.m)[concreteValue]
+	return ok
+}
+
+func (x *_GenesisState_6_map) Clear(key protoreflect.MapKey) {
+	if x.m == nil {
+		return
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	delete(*x.m, concreteKey)
+}
+
+func (x *_GenesisState_6_map) Get(key protoreflect.MapKey) protoreflect.Value {
+	if x.m == nil {
+		return protoreflect.Value{}
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	v, ok := (*x.m)[concreteKey]
+	if !ok {
+		return protoreflect.Value{}
+	}
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_GenesisState_6_map) Set(key protoreflect.MapKey, value protoreflect.Value) {
+	if !key.IsValid() || !value.IsValid() {
+		panic("invalid key or value provided")
+	}
+	keyUnwrapped := key.Uint()
+	concreteKey := keyUnwrapped
+	valueUnwrapped := value.String()
+	concreteValue := valueUnwrapped
+	(*x.m)[concreteKey] = concreteValue
+}
+
+func (x *_GenesisState_6_map) Mutable(key protoreflect.MapKey) protoreflect.Value {
+	panic("should not call Mutable on protoreflect.Map whose value is not of type protoreflect.Message")
+}
+
+func (x *_GenesisState_6_map) NewValue() protoreflect.Value {
+	v := ""
+	return protoreflect.ValueOfString(v)
+}
+
+func (x *_GenesisState_6_map) IsValid() bool {
+	return x.m != nil
+}
+
 var (
 	md_GenesisState                  protoreflect.MessageDescriptor
+	fd_GenesisState_ism              protoreflect.FieldDescriptor
 	fd_GenesisState_config           protoreflect.FieldDescriptor
 	fd_GenesisState_pending_epoch    protoreflect.FieldDescriptor
 	fd_GenesisState_finalized_epochs protoreflect.FieldDescriptor
@@ -280,6 +282,7 @@ var (
 func init() {
 	file_nova_v1_genesis_proto_init()
 	md_GenesisState = File_nova_v1_genesis_proto.Messages().ByName("GenesisState")
+	fd_GenesisState_ism = md_GenesisState.Fields().ByName("ism")
 	fd_GenesisState_config = md_GenesisState.Fields().ByName("config")
 	fd_GenesisState_pending_epoch = md_GenesisState.Fields().ByName("pending_epoch")
 	fd_GenesisState_finalized_epochs = md_GenesisState.Fields().ByName("finalized_epochs")
@@ -352,6 +355,12 @@ func (x *fastReflection_GenesisState) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.Ism != nil {
+		value := protoreflect.ValueOfMessage(x.Ism.ProtoReflect())
+		if !f(fd_GenesisState_ism, value) {
+			return
+		}
+	}
 	if x.Config != nil {
 		value := protoreflect.ValueOfMessage(x.Config.ProtoReflect())
 		if !f(fd_GenesisState_config, value) {
@@ -365,19 +374,19 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 		}
 	}
 	if len(x.FinalizedEpochs) != 0 {
-		value := protoreflect.ValueOfMap(&_GenesisState_3_map{m: &x.FinalizedEpochs})
+		value := protoreflect.ValueOfMap(&_GenesisState_4_map{m: &x.FinalizedEpochs})
 		if !f(fd_GenesisState_finalized_epochs, value) {
 			return
 		}
 	}
 	if len(x.StateRoots) != 0 {
-		value := protoreflect.ValueOfMap(&_GenesisState_4_map{m: &x.StateRoots})
+		value := protoreflect.ValueOfMap(&_GenesisState_5_map{m: &x.StateRoots})
 		if !f(fd_GenesisState_state_roots, value) {
 			return
 		}
 	}
 	if len(x.MailboxRoots) != 0 {
-		value := protoreflect.ValueOfMap(&_GenesisState_5_map{m: &x.MailboxRoots})
+		value := protoreflect.ValueOfMap(&_GenesisState_6_map{m: &x.MailboxRoots})
 		if !f(fd_GenesisState_mailbox_roots, value) {
 			return
 		}
@@ -397,6 +406,8 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.ism":
+		return x.Ism != nil
 	case "nova.v1.GenesisState.config":
 		return x.Config != nil
 	case "nova.v1.GenesisState.pending_epoch":
@@ -423,6 +434,8 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.ism":
+		x.Ism = nil
 	case "nova.v1.GenesisState.config":
 		x.Config = nil
 	case "nova.v1.GenesisState.pending_epoch":
@@ -449,6 +462,9 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
+	case "nova.v1.GenesisState.ism":
+		value := x.Ism
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	case "nova.v1.GenesisState.config":
 		value := x.Config
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
@@ -457,21 +473,21 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	case "nova.v1.GenesisState.finalized_epochs":
 		if len(x.FinalizedEpochs) == 0 {
-			return protoreflect.ValueOfMap(&_GenesisState_3_map{})
+			return protoreflect.ValueOfMap(&_GenesisState_4_map{})
 		}
-		mapValue := &_GenesisState_3_map{m: &x.FinalizedEpochs}
+		mapValue := &_GenesisState_4_map{m: &x.FinalizedEpochs}
 		return protoreflect.ValueOfMap(mapValue)
 	case "nova.v1.GenesisState.state_roots":
 		if len(x.StateRoots) == 0 {
-			return protoreflect.ValueOfMap(&_GenesisState_4_map{})
+			return protoreflect.ValueOfMap(&_GenesisState_5_map{})
 		}
-		mapValue := &_GenesisState_4_map{m: &x.StateRoots}
+		mapValue := &_GenesisState_5_map{m: &x.StateRoots}
 		return protoreflect.ValueOfMap(mapValue)
 	case "nova.v1.GenesisState.mailbox_roots":
 		if len(x.MailboxRoots) == 0 {
-			return protoreflect.ValueOfMap(&_GenesisState_5_map{})
+			return protoreflect.ValueOfMap(&_GenesisState_6_map{})
 		}
-		mapValue := &_GenesisState_5_map{m: &x.MailboxRoots}
+		mapValue := &_GenesisState_6_map{m: &x.MailboxRoots}
 		return protoreflect.ValueOfMap(mapValue)
 	default:
 		if descriptor.IsExtension() {
@@ -493,21 +509,23 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.ism":
+		x.Ism = value.Message().Interface().(*v1.GenesisState)
 	case "nova.v1.GenesisState.config":
 		x.Config = value.Message().Interface().(*Config)
 	case "nova.v1.GenesisState.pending_epoch":
 		x.PendingEpoch = value.Message().Interface().(*Epoch)
 	case "nova.v1.GenesisState.finalized_epochs":
 		mv := value.Map()
-		cmv := mv.(*_GenesisState_3_map)
+		cmv := mv.(*_GenesisState_4_map)
 		x.FinalizedEpochs = *cmv.m
 	case "nova.v1.GenesisState.state_roots":
 		mv := value.Map()
-		cmv := mv.(*_GenesisState_4_map)
+		cmv := mv.(*_GenesisState_5_map)
 		x.StateRoots = *cmv.m
 	case "nova.v1.GenesisState.mailbox_roots":
 		mv := value.Map()
-		cmv := mv.(*_GenesisState_5_map)
+		cmv := mv.(*_GenesisState_6_map)
 		x.MailboxRoots = *cmv.m
 	default:
 		if fd.IsExtension() {
@@ -529,6 +547,11 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.ism":
+		if x.Ism == nil {
+			x.Ism = new(v1.GenesisState)
+		}
+		return protoreflect.ValueOfMessage(x.Ism.ProtoReflect())
 	case "nova.v1.GenesisState.config":
 		if x.Config == nil {
 			x.Config = new(Config)
@@ -543,19 +566,19 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		if x.FinalizedEpochs == nil {
 			x.FinalizedEpochs = make(map[uint64]*Epoch)
 		}
-		value := &_GenesisState_3_map{m: &x.FinalizedEpochs}
+		value := &_GenesisState_4_map{m: &x.FinalizedEpochs}
 		return protoreflect.ValueOfMap(value)
 	case "nova.v1.GenesisState.state_roots":
 		if x.StateRoots == nil {
 			x.StateRoots = make(map[uint64]string)
 		}
-		value := &_GenesisState_4_map{m: &x.StateRoots}
+		value := &_GenesisState_5_map{m: &x.StateRoots}
 		return protoreflect.ValueOfMap(value)
 	case "nova.v1.GenesisState.mailbox_roots":
 		if x.MailboxRoots == nil {
 			x.MailboxRoots = make(map[uint64]string)
 		}
-		value := &_GenesisState_5_map{m: &x.MailboxRoots}
+		value := &_GenesisState_6_map{m: &x.MailboxRoots}
 		return protoreflect.ValueOfMap(value)
 	default:
 		if fd.IsExtension() {
@@ -570,6 +593,9 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "nova.v1.GenesisState.ism":
+		m := new(v1.GenesisState)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	case "nova.v1.GenesisState.config":
 		m := new(Config)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
@@ -578,13 +604,13 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	case "nova.v1.GenesisState.finalized_epochs":
 		m := make(map[uint64]*Epoch)
-		return protoreflect.ValueOfMap(&_GenesisState_3_map{m: &m})
+		return protoreflect.ValueOfMap(&_GenesisState_4_map{m: &m})
 	case "nova.v1.GenesisState.state_roots":
 		m := make(map[uint64]string)
-		return protoreflect.ValueOfMap(&_GenesisState_4_map{m: &m})
+		return protoreflect.ValueOfMap(&_GenesisState_5_map{m: &m})
 	case "nova.v1.GenesisState.mailbox_roots":
 		m := make(map[uint64]string)
-		return protoreflect.ValueOfMap(&_GenesisState_5_map{m: &m})
+		return protoreflect.ValueOfMap(&_GenesisState_6_map{m: &m})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: nova.v1.GenesisState"))
@@ -654,6 +680,10 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
+		if x.Ism != nil {
+			l = options.Size(x.Ism)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.Config != nil {
 			l = options.Size(x.Config)
 			n += 1 + l + runtime.Sov(uint64(l))
@@ -778,7 +808,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				dAtA[i] = 0x8
 				i = runtime.EncodeVarint(dAtA, i, uint64(baseI-i))
 				i--
-				dAtA[i] = 0x2a
+				dAtA[i] = 0x32
 				return protoiface.MarshalOutput{}, nil
 			}
 			if options.Deterministic {
@@ -819,7 +849,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				dAtA[i] = 0x8
 				i = runtime.EncodeVarint(dAtA, i, uint64(baseI-i))
 				i--
-				dAtA[i] = 0x22
+				dAtA[i] = 0x2a
 				return protoiface.MarshalOutput{}, nil
 			}
 			if options.Deterministic {
@@ -867,7 +897,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				dAtA[i] = 0x8
 				i = runtime.EncodeVarint(dAtA, i, uint64(baseI-i))
 				i--
-				dAtA[i] = 0x1a
+				dAtA[i] = 0x22
 				return protoiface.MarshalOutput{}, nil
 			}
 			if options.Deterministic {
@@ -907,10 +937,24 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 			copy(dAtA[i:], encoded)
 			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0x1a
 		}
 		if x.Config != nil {
 			encoded, err := options.Marshal(x.Config)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if x.Ism != nil {
+			encoded, err := options.Marshal(x.Ism)
 			if err != nil {
 				return protoiface.MarshalOutput{
 					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
@@ -974,6 +1018,42 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 			switch fieldNum {
 			case 1:
 				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Ism", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.Ism == nil {
+					x.Ism = &v1.GenesisState{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Ism); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Config", wireType)
 				}
 				var msglen int
@@ -1008,7 +1088,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
-			case 2:
+			case 3:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PendingEpoch", wireType)
 				}
@@ -1044,7 +1124,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
-			case 3:
+			case 4:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field FinalizedEpochs", wireType)
 				}
@@ -1159,7 +1239,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				}
 				x.FinalizedEpochs[mapkey] = mapvalue
 				iNdEx = postIndex
-			case 4:
+			case 5:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field StateRoots", wireType)
 				}
@@ -1272,7 +1352,7 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				}
 				x.StateRoots[mapkey] = mapvalue
 				iNdEx = postIndex
-			case 5:
+			case 6:
 				if wireType != 2 {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MailboxRoots", wireType)
 				}
@@ -1439,11 +1519,12 @@ type GenesisState struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Config          *Config           `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
-	PendingEpoch    *Epoch            `protobuf:"bytes,2,opt,name=pending_epoch,json=pendingEpoch,proto3" json:"pending_epoch,omitempty"`
-	FinalizedEpochs map[uint64]*Epoch `protobuf:"bytes,3,rep,name=finalized_epochs,json=finalizedEpochs,proto3" json:"finalized_epochs,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	StateRoots      map[uint64]string `protobuf:"bytes,4,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	MailboxRoots    map[uint64]string `protobuf:"bytes,5,rep,name=mailbox_roots,json=mailboxRoots,proto3" json:"mailbox_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Ism             *v1.GenesisState  `protobuf:"bytes,1,opt,name=ism,proto3" json:"ism,omitempty"`
+	Config          *Config           `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
+	PendingEpoch    *Epoch            `protobuf:"bytes,3,opt,name=pending_epoch,json=pendingEpoch,proto3" json:"pending_epoch,omitempty"`
+	FinalizedEpochs map[uint64]*Epoch `protobuf:"bytes,4,rep,name=finalized_epochs,json=finalizedEpochs,proto3" json:"finalized_epochs,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	StateRoots      map[uint64]string `protobuf:"bytes,5,rep,name=state_roots,json=stateRoots,proto3" json:"state_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	MailboxRoots    map[uint64]string `protobuf:"bytes,6,rep,name=mailbox_roots,json=mailboxRoots,proto3" json:"mailbox_roots,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *GenesisState) Reset() {
@@ -1464,6 +1545,13 @@ func (*GenesisState) ProtoMessage() {}
 // Deprecated: Use GenesisState.ProtoReflect.Descriptor instead.
 func (*GenesisState) Descriptor() ([]byte, []int) {
 	return file_nova_v1_genesis_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GenesisState) GetIsm() *v1.GenesisState {
+	if x != nil {
+		return x.Ism
+	}
+	return nil
 }
 
 func (x *GenesisState) GetConfig() *Config {
@@ -1507,53 +1595,58 @@ var file_nova_v1_genesis_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69,
 	0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x07, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31,
 	0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x12, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x2f,
-	0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xb9, 0x04, 0x0a, 0x0c, 0x47,
-	0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x2d, 0x0a, 0x06, 0x63,
-	0x6f, 0x6e, 0x66, 0x69, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x6e, 0x6f,
-	0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x42, 0x04, 0xc8, 0xde,
-	0x1f, 0x00, 0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x33, 0x0a, 0x0d, 0x70, 0x65,
-	0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x65, 0x70, 0x6f, 0x63, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x0b, 0x32, 0x0e, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63,
-	0x68, 0x52, 0x0c, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x12,
-	0x5b, 0x0a, 0x10, 0x66, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x65, 0x70, 0x6f,
-	0x63, 0x68, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x6e, 0x6f, 0x76, 0x61,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x69, 0x73, 0x6d,
+	0x2f, 0x76, 0x31, 0x2f, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x1a, 0x12, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xec, 0x04, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x31, 0x0a, 0x03, 0x69, 0x73, 0x6d, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x69, 0x73, 0x6d, 0x2e, 0x76,
+	0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x42, 0x04,
+	0xc8, 0xde, 0x1f, 0x00, 0x52, 0x03, 0x69, 0x73, 0x6d, 0x12, 0x2d, 0x0a, 0x06, 0x63, 0x6f, 0x6e,
+	0x66, 0x69, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x6e, 0x6f, 0x76, 0x61,
+	0x2e, 0x76, 0x31, 0x2e, 0x43, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00,
+	0x52, 0x06, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x67, 0x12, 0x33, 0x0a, 0x0d, 0x70, 0x65, 0x6e, 0x64,
+	0x69, 0x6e, 0x67, 0x5f, 0x65, 0x70, 0x6f, 0x63, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0e, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x52,
+	0x0c, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x12, 0x5b, 0x0a,
+	0x10, 0x66, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x5f, 0x65, 0x70, 0x6f, 0x63, 0x68,
+	0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76,
+	0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2e, 0x46,
+	0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x73, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0f, 0x66, 0x69, 0x6e, 0x61, 0x6c,
+	0x69, 0x7a, 0x65, 0x64, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x73, 0x12, 0x46, 0x0a, 0x0b, 0x73, 0x74,
+	0x61, 0x74, 0x65, 0x5f, 0x72, 0x6f, 0x6f, 0x74, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x25, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69,
+	0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x74,
+	0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x73, 0x74, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f,
+	0x74, 0x73, 0x12, 0x4c, 0x0a, 0x0d, 0x6d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x5f, 0x72, 0x6f,
+	0x6f, 0x74, 0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x6e, 0x6f, 0x76, 0x61,
 	0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65,
-	0x2e, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x73,
-	0x45, 0x6e, 0x74, 0x72, 0x79, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x0f, 0x66, 0x69, 0x6e,
-	0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x73, 0x12, 0x46, 0x0a, 0x0b,
-	0x73, 0x74, 0x61, 0x74, 0x65, 0x5f, 0x72, 0x6f, 0x6f, 0x74, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x25, 0x2e, 0x6e, 0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65,
-	0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x6f,
-	0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x73, 0x74, 0x61, 0x74, 0x65, 0x52,
-	0x6f, 0x6f, 0x74, 0x73, 0x12, 0x4c, 0x0a, 0x0d, 0x6d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x5f,
-	0x72, 0x6f, 0x6f, 0x74, 0x73, 0x18, 0x05, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x27, 0x2e, 0x6e, 0x6f,
-	0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61,
-	0x74, 0x65, 0x2e, 0x4d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f, 0x6f, 0x74, 0x73, 0x45,
-	0x6e, 0x74, 0x72, 0x79, 0x52, 0x0c, 0x6d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f, 0x6f,
-	0x74, 0x73, 0x1a, 0x52, 0x0a, 0x14, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x45,
-	0x70, 0x6f, 0x63, 0x68, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x24, 0x0a, 0x05,
-	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x6e, 0x6f,
-	0x76, 0x61, 0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x52, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x3d, 0x0a, 0x0f, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52,
-	0x6f, 0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76,
-	0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
-	0x65, 0x3a, 0x02, 0x38, 0x01, 0x1a, 0x3f, 0x0a, 0x11, 0x4d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78,
-	0x52, 0x6f, 0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65,
-	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05,
-	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c,
-	0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x42, 0x89, 0x01, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x6e,
-	0x6f, 0x76, 0x61, 0x2e, 0x76, 0x31, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50,
-	0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2d, 0x61, 0x73, 0x73, 0x65, 0x74, 0x73, 0x2f,
-	0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31,
-	0x3b, 0x6e, 0x6f, 0x76, 0x61, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x58, 0x58, 0xaa, 0x02, 0x07,
-	0x4e, 0x6f, 0x76, 0x61, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x07, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56,
-	0x31, 0xe2, 0x02, 0x13, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x08, 0x4e, 0x6f, 0x76, 0x61, 0x3a, 0x3a,
-	0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x2e, 0x4d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f, 0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74,
+	0x72, 0x79, 0x52, 0x0c, 0x6d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f, 0x6f, 0x74, 0x73,
+	0x1a, 0x52, 0x0a, 0x14, 0x46, 0x69, 0x6e, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x64, 0x45, 0x70, 0x6f,
+	0x63, 0x68, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x24, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x6e, 0x6f, 0x76, 0x61,
+	0x2e, 0x76, 0x31, 0x2e, 0x45, 0x70, 0x6f, 0x63, 0x68, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x3a, 0x02, 0x38, 0x01, 0x1a, 0x3d, 0x0a, 0x0f, 0x53, 0x74, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f,
+	0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a,
+	0x02, 0x38, 0x01, 0x1a, 0x3f, 0x0a, 0x11, 0x4d, 0x61, 0x69, 0x6c, 0x62, 0x6f, 0x78, 0x52, 0x6f,
+	0x6f, 0x74, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x3a, 0x02, 0x38, 0x01, 0x42, 0x89, 0x01, 0x0a, 0x0b, 0x63, 0x6f, 0x6d, 0x2e, 0x6e, 0x6f, 0x76,
+	0x61, 0x2e, 0x76, 0x31, 0x42, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x50, 0x72, 0x6f,
+	0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x6e, 0x6f, 0x62, 0x6c, 0x65, 0x2d, 0x61, 0x73, 0x73, 0x65, 0x74, 0x73, 0x2f, 0x6e, 0x6f,
+	0x76, 0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6e, 0x6f, 0x76, 0x61, 0x2f, 0x76, 0x31, 0x3b, 0x6e,
+	0x6f, 0x76, 0x61, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x4e, 0x58, 0x58, 0xaa, 0x02, 0x07, 0x4e, 0x6f,
+	0x76, 0x61, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x07, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31, 0xe2,
+	0x02, 0x13, 0x4e, 0x6f, 0x76, 0x61, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74,
+	0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x08, 0x4e, 0x6f, 0x76, 0x61, 0x3a, 0x3a, 0x56, 0x31,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1570,25 +1663,27 @@ func file_nova_v1_genesis_proto_rawDescGZIP() []byte {
 
 var file_nova_v1_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_nova_v1_genesis_proto_goTypes = []interface{}{
-	(*GenesisState)(nil), // 0: nova.v1.GenesisState
-	nil,                  // 1: nova.v1.GenesisState.FinalizedEpochsEntry
-	nil,                  // 2: nova.v1.GenesisState.StateRootsEntry
-	nil,                  // 3: nova.v1.GenesisState.MailboxRootsEntry
-	(*Config)(nil),       // 4: nova.v1.Config
-	(*Epoch)(nil),        // 5: nova.v1.Epoch
+	(*GenesisState)(nil),    // 0: nova.v1.GenesisState
+	nil,                     // 1: nova.v1.GenesisState.FinalizedEpochsEntry
+	nil,                     // 2: nova.v1.GenesisState.StateRootsEntry
+	nil,                     // 3: nova.v1.GenesisState.MailboxRootsEntry
+	(*v1.GenesisState)(nil), // 4: nova.ism.v1.GenesisState
+	(*Config)(nil),          // 5: nova.v1.Config
+	(*Epoch)(nil),           // 6: nova.v1.Epoch
 }
 var file_nova_v1_genesis_proto_depIdxs = []int32{
-	4, // 0: nova.v1.GenesisState.config:type_name -> nova.v1.Config
-	5, // 1: nova.v1.GenesisState.pending_epoch:type_name -> nova.v1.Epoch
-	1, // 2: nova.v1.GenesisState.finalized_epochs:type_name -> nova.v1.GenesisState.FinalizedEpochsEntry
-	2, // 3: nova.v1.GenesisState.state_roots:type_name -> nova.v1.GenesisState.StateRootsEntry
-	3, // 4: nova.v1.GenesisState.mailbox_roots:type_name -> nova.v1.GenesisState.MailboxRootsEntry
-	5, // 5: nova.v1.GenesisState.FinalizedEpochsEntry.value:type_name -> nova.v1.Epoch
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	4, // 0: nova.v1.GenesisState.ism:type_name -> nova.ism.v1.GenesisState
+	5, // 1: nova.v1.GenesisState.config:type_name -> nova.v1.Config
+	6, // 2: nova.v1.GenesisState.pending_epoch:type_name -> nova.v1.Epoch
+	1, // 3: nova.v1.GenesisState.finalized_epochs:type_name -> nova.v1.GenesisState.FinalizedEpochsEntry
+	2, // 4: nova.v1.GenesisState.state_roots:type_name -> nova.v1.GenesisState.StateRootsEntry
+	3, // 5: nova.v1.GenesisState.mailbox_roots:type_name -> nova.v1.GenesisState.MailboxRootsEntry
+	6, // 6: nova.v1.GenesisState.FinalizedEpochsEntry.value:type_name -> nova.v1.Epoch
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_nova_v1_genesis_proto_init() }

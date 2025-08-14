@@ -5,7 +5,7 @@ modules:
       app_name: SimApp
       begin_blockers: [ staking ]
       end_blockers: [ staking ]
-      init_genesis: [ auth, bank, staking, genutil, nova ]
+      init_genesis: [ auth, bank, staking, genutil, hyperlane, warp, nova ]
       override_store_keys:
         - module_name: auth
           kv_store_key: acc
@@ -19,6 +19,9 @@ modules:
           permissions: [ burner, staking ]
         - account: not_bonded_tokens_pool
           permissions: [ burner, staking ]
+        - account: hyperlane
+        - account: warp
+          permissions: [ burner, minter ]
   - name: bank
     config:
       "@type": cosmos.bank.module.v1.Module
@@ -36,6 +39,18 @@ modules:
   - name: tx
     config:
       "@type": cosmos.tx.config.v1.Config
+
+  - name: hyperlane
+    config:
+      "@type": hyperlane.core.module.v1.Module
+      authority: noble1kg0mtdjvaqdnk5hw599na9mq66vs2c8zanes8t
+  - name: warp
+    config:
+      "@type": hyperlane.warp.module.v1.Module
+      authority: noble1kg0mtdjvaqdnk5hw599na9mq66vs2c8zanes8t
+      enabled_tokens:
+        - 1 # Enable Collateral tokens
+        - 2 # Enable Synthetic tokens
 
   - name: nova
     config:
