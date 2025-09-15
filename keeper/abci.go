@@ -268,7 +268,7 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 		key := string(vote.VoteExtension)
 		tallies[key] += vote.Validator.Power
 		newPower := tallies[key]
-		if key != winner && newPower > winnerPower {
+		if newPower > winnerPower {
 			winner = key
 			winnerPower = newPower
 		}
