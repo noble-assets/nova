@@ -1,11 +1,5 @@
 .idea
 .nova
-.ponder
-broadcast
 build
-cache
-generated
-node_modules
-out
 go.work
 go.work.sum

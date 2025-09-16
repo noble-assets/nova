@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@hyperlane-xyz/core": "9.0.5",
-    "forge-std": "github:foundry-rs/forge-std#v1.10.0"
-  }
-}
