@@ -46,7 +46,7 @@ func ParseMetadata(bz []byte) (Metadata, error) {
 	offset += 4
 
 	var proof [32][32]byte
-	for i := 0; i < 32; i++ {
+	for i := range 32 {
 		copy(proof[i][:], bz[offset:offset+32])
 		offset += 32
 	}
@@ -65,7 +65,7 @@ func (m Metadata) Bytes() []byte {
 	binary.BigEndian.PutUint32(bz[offset:], m.Index)
 	offset += 4
 
-	for i := 0; i < 32; i++ {
+	for i := range 32 {
 		copy(bz[offset:offset+32], m.Proof[i][:])
 		offset += 32
 	}

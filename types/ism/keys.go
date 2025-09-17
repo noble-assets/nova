@@ -24,6 +24,10 @@ import hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 
 const SubmoduleName = "nova/ism"
 
+// ExpectedId defines the expected ISM ID for this submodule. It was derived by
+// concatenating a module specifier ("router_ism"), internal type (255), and
+// internal id (0). This is aligned with how the Hyperlane x/core module
+// derives their default ISM IDs.
 var ExpectedId, _ = hyperlaneutil.DecodeHexAddress("0x726f757465725f69736d00000000000000000000000000ff0000000000000000")
 
 var PausedKey = []byte("ism/paused")
