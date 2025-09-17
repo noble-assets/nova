@@ -187,7 +187,7 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 							Short:     "Unpause the ISM (authority gated)",
 						},
 					},
-					Short: "Transactions commands for the Nova ISM submodule",
+					Short: "Transaction commands for the Nova ISM submodule",
 				},
 			},
 		},
