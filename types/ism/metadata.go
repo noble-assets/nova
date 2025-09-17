@@ -26,13 +26,18 @@ import (
 	"cosmossdk.io/errors"
 )
 
-// MetadataSize defines the byte encoded size of Metadata.
-// index size + (# of proof leaves * leaf size)
-const MetadataSize = 4 + 32*32
+const (
+	IndexSize   = 4
+	ProofLeaves = 32
+	LeafSize    = 32
+
+	// MetadataSize defines the byte encoded size of Metadata.
+	MetadataSize = IndexSize + ProofLeaves*LeafSize
+)
 
 type Metadata struct {
 	Index uint32
-	Proof [32][32]byte
+	Proof [ProofLeaves][LeafSize]byte
 }
 
 func ParseMetadata(bz []byte) (Metadata, error) {
@@ -42,13 +47,13 @@ func ParseMetadata(bz []byte) (Metadata, error) {
 
 	offset := 0
 
-	index := binary.BigEndian.Uint32(bz[offset : offset+4])
-	offset += 4
+	index := binary.BigEndian.Uint32(bz[offset : offset+IndexSize])
+	offset += IndexSize
 
-	var proof [32][32]byte
-	for i := range 32 {
-		copy(proof[i][:], bz[offset:offset+32])
-		offset += 32
+	var proof [ProofLeaves][LeafSize]byte
+	for i := range ProofLeaves {
+		copy(proof[i][:], bz[offset:offset+LeafSize])
+		offset += LeafSize
 	}
 
 	return Metadata{
@@ -63,11 +68,11 @@ func (m Metadata) Bytes() []byte {
 	offset := 0
 
 	binary.BigEndian.PutUint32(bz[offset:], m.Index)
-	offset += 4
+	offset += IndexSize
 
-	for i := range 32 {
-		copy(bz[offset:offset+32], m.Proof[i][:])
-		offset += 32
+	for i := range ProofLeaves {
+		copy(bz[offset:offset+LeafSize], m.Proof[i][:])
+		offset += LeafSize
 	}
 
 	return bz
