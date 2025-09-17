@@ -27,10 +27,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+// CoreKeeper defines the interface of the x/nova Keeper.
 type CoreKeeper interface {
 	GetLatestMailboxRoot(ctx context.Context) (common.Hash, error)
 }
 
+// HyperlaneKeeper defines the interface of the Hyperlane x/core Keeper.
 type HyperlaneKeeper interface {
 	IsmRouter() *hyperlaneutil.Router[hyperlaneutil.InterchainSecurityModule]
 }
