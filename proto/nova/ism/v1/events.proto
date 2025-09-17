@@ -4,8 +4,8 @@ package nova.ism.v1;
 
 option go_package = "github.com/noble-assets/nova/types/ism";
 
-// Paused is an event emitted whenever the module authority pauses the ISM.
+// Paused is an event emitted whenever the ISM is paused.
 message Paused {}
 
-// Unpaused is an event emitted whenever the module authority unpauses the ISM.
+// Unpaused is an event emitted whenever the ISM is unpaused.
 message Unpaused {}

@@ -30,4 +30,9 @@ const SubmoduleName = "nova/ism"
 // derives their default ISM IDs.
 var ExpectedId, _ = hyperlaneutil.DecodeHexAddress("0x726f757465725f69736d00000000000000000000000000ff0000000000000000")
 
+// ModuleId defines the expected Module ID for this ISM. We have chosen 255, as
+// it's the largest uint8, to not run into duplicate registrations with the
+// default Hyperlane ISMs.
+const ModuleId = uint8(255)
+
 var PausedKey = []byte("ism/paused")

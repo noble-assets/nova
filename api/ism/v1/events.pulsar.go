@@ -737,7 +737,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Paused is an event emitted whenever the module authority pauses the ISM.
+// Paused is an event emitted whenever the ISM is paused.
 type Paused struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -764,7 +764,7 @@ func (*Paused) Descriptor() ([]byte, []int) {
 	return file_nova_ism_v1_events_proto_rawDescGZIP(), []int{0}
 }
 
-// Unpaused is an event emitted whenever the module authority unpauses the ISM.
+// Unpaused is an event emitted whenever the ISM is unpaused.
 type Unpaused struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

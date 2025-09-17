@@ -22,7 +22,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Paused is an event emitted whenever the module authority pauses the ISM.
+// Paused is an event emitted whenever the ISM is paused.
 type Paused struct {
 }
 
@@ -59,7 +59,7 @@ func (m *Paused) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Paused proto.InternalMessageInfo
 
-// Unpaused is an event emitted whenever the module authority unpauses the ISM.
+// Unpaused is an event emitted whenever the ISM is unpaused.
 type Unpaused struct {
 }
 

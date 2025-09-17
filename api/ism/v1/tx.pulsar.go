@@ -1581,7 +1581,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// MsgPause allows the module authority to pause the ISM.
+// MsgPause pauses the ISM.
 type MsgPause struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1644,7 +1644,7 @@ func (*MsgPauseResponse) Descriptor() ([]byte, []int) {
 	return file_nova_ism_v1_tx_proto_rawDescGZIP(), []int{1}
 }
 
-// MsgUnpause allows the module authority to unpause the ISM.
+// MsgUnpause unpauses the ISM.
 type MsgUnpause struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

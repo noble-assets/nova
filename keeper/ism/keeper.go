@@ -65,10 +65,8 @@ func NewKeeper(authority string, storeService store.KVStoreService, eventService
 	}
 
 	// We must register our ISM with the Hyperlane module so that messages from
-	// the Noble AppLayer are correctly routed. We register our ISM as 255, as
-	// it's the largest uint8, to not run into duplicate registrations with the
-	// default Hyperlane ISMs.
-	hyperlaneKeeper.IsmRouter().RegisterModule(255, keeper)
+	// the Noble AppLayer are correctly routed.
+	hyperlaneKeeper.IsmRouter().RegisterModule(types.ModuleId, keeper)
 
 	return keeper
 }

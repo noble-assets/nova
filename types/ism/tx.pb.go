@@ -31,7 +31,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgPause allows the module authority to pause the ISM.
+// MsgPause pauses the ISM.
 type MsgPause struct {
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 }
@@ -106,7 +106,7 @@ func (m *MsgPauseResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgPauseResponse proto.InternalMessageInfo
 
-// MsgUnpause allows the module authority to unpause the ISM.
+// MsgUnpause unpauses the ISM.
 type MsgUnpause struct {
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 }

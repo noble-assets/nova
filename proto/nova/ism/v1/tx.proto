@@ -16,7 +16,7 @@ service Msg {
   rpc Unpause(MsgUnpause) returns (MsgUnpauseResponse);
 }
 
-// MsgPause allows the module authority to pause the ISM.
+// MsgPause pauses the ISM.
 message MsgPause {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "nova/ism/Pause";
@@ -30,7 +30,7 @@ message MsgPause {
 // MsgPauseResponse is the response of the Pause message.
 message MsgPauseResponse {}
 
-// MsgUnpause allows the module authority to unpause the ISM.
+// MsgUnpause unpauses the ISM.
 message MsgUnpause {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "nova/ism/Unpause";
