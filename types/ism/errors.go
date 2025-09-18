@@ -18,30 +18,13 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package ism
 
-import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+import "cosmossdk.io/errors"
 
-	"github.com/noble-assets/nova/types/ism"
+var (
+	ErrInvalidRequest   = errors.Register(SubmoduleName, 0, "invalid request")
+	ErrInvalidAuthority = errors.Register(SubmoduleName, 1, "invalid authority")
+	ErrInvalidMetadata  = errors.Register(SubmoduleName, 2, "invalid metadata")
+	ErrUnableToVerify   = errors.Register(SubmoduleName, 3, "unable to verify")
 )
-
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	ism.RegisterLegacyAminoCodec(cdc)
-
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
-}
-
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	ism.RegisterInterfaces(registry)
-
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-}

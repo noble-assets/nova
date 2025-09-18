@@ -3,15 +3,18 @@ syntax = "proto3";
 package nova.v1;
 
 import "gogoproto/gogo.proto";
+import "nova/ism/v1/genesis.proto";
 import "nova/v1/nova.proto";
 
 option go_package = "github.com/noble-assets/nova/types";
 
 // GenesisState defines the genesis state of the Nova module.
 message GenesisState {
-  Config config = 1 [(gogoproto.nullable) = false];
-  Epoch pending_epoch = 2;
-  map<uint64, Epoch> finalized_epochs = 3 [(gogoproto.nullable) = false];
-  map<uint64, string> state_roots = 4;
-  map<uint64, string> mailbox_roots = 5;
+  nova.ism.v1.GenesisState ism = 1 [(gogoproto.nullable) = false];
+
+  Config config = 2 [(gogoproto.nullable) = false];
+  Epoch pending_epoch = 3;
+  map<uint64, Epoch> finalized_epochs = 4 [(gogoproto.nullable) = false];
+  map<uint64, string> state_roots = 5;
+  map<uint64, string> mailbox_roots = 6;
 }

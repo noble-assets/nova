@@ -18,30 +18,21 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package ism
 
-import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+import hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
 
-	"github.com/noble-assets/nova/types/ism"
-)
+const SubmoduleName = "nova/ism"
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	ism.RegisterLegacyAminoCodec(cdc)
+// ExpectedId defines the expected ISM ID for this submodule. It was derived by
+// concatenating a module specifier ("router_ism"), internal type (255), and
+// internal id (0). This is aligned with how the Hyperlane x/core module
+// derives their default ISM IDs.
+var ExpectedId, _ = hyperlaneutil.DecodeHexAddress("0x726f757465725f69736d00000000000000000000000000ff0000000000000000")
 
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
-}
+// ModuleId defines the expected Module ID for this ISM. We have chosen 255, as
+// it's the largest uint8, to not run into duplicate registrations with the
+// default Hyperlane ISMs.
+const ModuleId = uint8(255)
 
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	ism.RegisterInterfaces(registry)
-
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
-}
+var PausedKey = []byte("ism/paused")

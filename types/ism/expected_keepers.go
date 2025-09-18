@@ -18,30 +18,21 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND
 // TITLE.
 
-package types
+package ism
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/msgservice"
+	"context"
 
-	"github.com/noble-assets/nova/types/ism"
+	hyperlaneutil "github.com/bcp-innovations/hyperlane-cosmos/util"
+	"github.com/ethereum/go-ethereum/common"
 )
 
-func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	ism.RegisterLegacyAminoCodec(cdc)
-
-	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
-	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
+// CoreKeeper defines the interface of the x/nova Keeper.
+type CoreKeeper interface {
+	GetLatestMailboxRoot(ctx context.Context) (common.Hash, error)
 }
 
-func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	ism.RegisterInterfaces(registry)
-
-	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
-	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+// HyperlaneKeeper defines the interface of the Hyperlane x/core Keeper.
+type HyperlaneKeeper interface {
+	IsmRouter() *hyperlaneutil.Router[hyperlaneutil.InterchainSecurityModule]
 }

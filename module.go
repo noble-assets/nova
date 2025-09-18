@@ -44,11 +44,14 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	ismv1 "github.com/noble-assets/nova/api/ism/v1"
 	modulev1 "github.com/noble-assets/nova/api/module/v1"
 	novav1 "github.com/noble-assets/nova/api/v1"
 	"github.com/noble-assets/nova/client/cli"
 	"github.com/noble-assets/nova/keeper"
+	ismkeeper "github.com/noble-assets/nova/keeper/ism"
 	"github.com/noble-assets/nova/types"
+	ismtypes "github.com/noble-assets/nova/types/ism"
 )
 
 // ConsensusVersion defines the current Nova module consensus version.
@@ -85,6 +88,10 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *r
 	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
 		panic(err)
 	}
+
+	if err := ismtypes.RegisterQueryHandlerClient(context.Background(), mux, ismtypes.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
 }
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
@@ -105,13 +112,15 @@ func (b AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncoding
 type AppModule struct {
 	AppModuleBasic
 
-	keeper *keeper.Keeper
+	keeper    *keeper.Keeper
+	ismKeeper *ismkeeper.Keeper
 }
 
-func NewAppModule(keeper *keeper.Keeper) AppModule {
+func NewAppModule(keeper *keeper.Keeper, ismKeeper *ismkeeper.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(),
 		keeper:         keeper,
+		ismKeeper:      ismKeeper,
 	}
 }
 
@@ -126,16 +135,21 @@ func (m AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, bz json.Raw
 	cdc.MustUnmarshalJSON(bz, &genesis)
 
 	m.keeper.InitGenesis(ctx, genesis)
+	m.ismKeeper.InitGenesis(ctx, genesis.Ism)
 }
 
 func (m AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	genesis := m.keeper.ExportGenesis(ctx)
+	genesis.Ism = m.ismKeeper.ExportGenesis(ctx)
 	return cdc.MustMarshalJSON(genesis)
 }
 
 func (m AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServer(m.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServer(m.keeper))
+
+	ismtypes.RegisterMsgServer(cfg.MsgServer(), ismkeeper.NewMsgServer(m.ismKeeper))
+	ismtypes.RegisterQueryServer(cfg.QueryServer(), ismkeeper.NewQueryServer(m.ismKeeper))
 }
 
 //
@@ -156,6 +170,24 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "set-hook-address [hook-address]",
 					Short:          "Set a new hook address (authority gated)",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "hook_address"}},
+				},
+			},
+			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
+				"ism": {
+					Service: ismv1.Msg_ServiceDesc.ServiceName,
+					RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+						{
+							RpcMethod: "Pause",
+							Use:       "pause",
+							Short:     "Pause the ISM (authority gated)",
+						},
+						{
+							RpcMethod: "Unpause",
+							Use:       "unpause",
+							Short:     "Unpause the ISM (authority gated)",
+						},
+					},
+					Short: "Transaction commands for the Nova ISM submodule",
 				},
 			},
 		},
@@ -215,6 +247,19 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Skip:      true,
 				},
 			},
+			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
+				"ism": {
+					Service: ismv1.Query_ServiceDesc.ServiceName,
+					RpcCommandOptions: []*autocliv1.RpcCommandOptions{
+						{
+							RpcMethod: "Paused",
+							Use:       "paused",
+							Short:     "Query paused state",
+						},
+					},
+					Short: "Querying commands for the Nova ISM submodule",
+				},
+			},
 			EnhanceCustomCommand: true,
 		},
 	}
@@ -243,6 +288,8 @@ type ModuleInputs struct {
 	Logger         log.Logger
 	ValidatorStore baseapp.ValidatorStore
 
+	HyperlaneKeeper ismtypes.HyperlaneKeeper
+
 	AppOpts servertypes.AppOptions `optional:"true"`
 	Viper   *viper.Viper           `optional:"true"`
 }
@@ -250,8 +297,9 @@ type ModuleInputs struct {
 type ModuleOutputs struct {
 	depinject.Out
 
-	Keeper *keeper.Keeper
-	Module appmodule.AppModule
+	Keeper    *keeper.Keeper
+	IsmKeeper *ismkeeper.Keeper
+	Module    appmodule.AppModule
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
@@ -268,7 +316,8 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 
 	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	k := keeper.NewKeeper(authority.String(), in.Codec, in.StoreService, in.EventService, in.Logger, rpcAddress, in.ValidatorStore)
-	m := NewAppModule(k)
+	ismKeeper := ismkeeper.NewKeeper(authority.String(), in.StoreService, in.EventService, in.Logger, k, in.HyperlaneKeeper)
+	m := NewAppModule(k, ismKeeper)
 
-	return ModuleOutputs{Keeper: k, Module: m}
+	return ModuleOutputs{Keeper: k, IsmKeeper: ismKeeper, Module: m}
 }
