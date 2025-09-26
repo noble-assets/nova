@@ -136,7 +136,7 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 			return res, nil
 		}
 
-		err := baseapp.ValidateVoteExtensions(ctx, k.valStore, ctx.BlockHeight(), ctx.ChainID(), req.LocalLastCommit)
+		err := baseapp.ValidateVoteExtensions(ctx, k.stakingKeeper, ctx.BlockHeight(), ctx.ChainID(), req.LocalLastCommit)
 		if err != nil {
 			return nil, err
 		}
@@ -184,7 +184,7 @@ func (k *Keeper) ProcessProposalHandler(txConfig client.TxConfig) sdk.ProcessPro
 			return accept, nil
 		}
 
-		err := baseapp.ValidateVoteExtensions(ctx, k.valStore, ctx.BlockHeight(), ctx.ChainID(), injection.CommitInfo)
+		err := baseapp.ValidateVoteExtensions(ctx, k.stakingKeeper, ctx.BlockHeight(), ctx.ChainID(), injection.CommitInfo)
 		if err != nil {
 			return nil, err
 		}

@@ -22,7 +22,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/hex"
 
 	"cosmossdk.io/errors"
 	"github.com/ethereum/go-ethereum/common"
@@ -107,15 +106,10 @@ func (s msgServer) SetEnrolledValidators(ctx context.Context, msg *types.MsgSetE
 		return nil, errors.Wrap(err, "unable to clear old enrolled validators from state")
 	}
 
-	for _, enrolledValidator := range msg.EnrolledValidators {
-		bz, err := hex.DecodeString(enrolledValidator)
+	for _, address := range msg.EnrolledValidators {
+		err := s.setEnrolledValidator(ctx, address)
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to decode enrolled validator %s", enrolledValidator)
-		}
-
-		err = s.enrolledValidators.Set(ctx, bz)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to set enrolled validator %s in state", enrolledValidator)
+			return nil, err
 		}
 	}
 

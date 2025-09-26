@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package nova.v1;
 
+import "amino/amino.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos/query/v1/query.proto";
 import "gogoproto/gogo.proto";
@@ -66,7 +67,7 @@ message QueryConfig {}
 message QueryConfigResponse {
   uint64 epoch_length = 1;
   string hook_address = 2;
-  repeated string enrolled_validators = 3;
+  repeated string enrolled_validators = 3 [(amino.dont_omitempty) = true];
 }
 
 message QueryFinalizedEpochs {

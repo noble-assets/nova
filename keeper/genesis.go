@@ -22,7 +22,6 @@ package keeper
 
 import (
 	"context"
-	"encoding/hex"
 
 	"cosmossdk.io/errors"
 	"github.com/ethereum/go-ethereum/common"
@@ -40,15 +39,10 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 		panic(errors.Wrap(err, "failed to set genesis hook address"))
 	}
 
-	for _, enrolledValidator := range genesis.Config.EnrolledValidators {
-		bz, err := hex.DecodeString(enrolledValidator)
+	for _, address := range genesis.Config.EnrolledValidators {
+		err := k.setEnrolledValidator(ctx, address)
 		if err != nil {
-			panic(errors.Wrapf(err, "failed to decode enrolled validator %s", enrolledValidator))
-		}
-
-		err = k.enrolledValidators.Set(ctx, bz)
-		if err != nil {
-			panic(errors.Wrapf(err, "failed to set enrolled validator %s", enrolledValidator))
+			panic(err)
 		}
 	}
 
