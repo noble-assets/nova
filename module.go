@@ -171,6 +171,14 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Set a new hook address (authority gated)",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "hook_address"}},
 				},
+				{
+					RpcMethod: "SetEnrolledValidators",
+					Use:       "set-enrolled-validators [enrolled-validators ...]",
+					Short:     "Set new enrolled validators (authority gated)",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "enrolled_validators", Varargs: true},
+					},
+				},
 			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"ism": {

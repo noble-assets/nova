@@ -29,8 +29,9 @@ import (
 func DefaultGenesisState() *GenesisState {
 	return &GenesisState{
 		Config: Config{
-			EpochLength: 100, // 5 secs @ 50 ms AppLayer block time.
-			HookAddress: common.Address{}.String(),
+			EpochLength:        50, // 5 secs @ 100 ms AppLayer block time.
+			HookAddress:        common.Address{}.String(),
+			EnrolledValidators: []string{},
 		},
 	}
 }

@@ -22,14 +22,26 @@ package keeper
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/noble-assets/nova/types"
 )
+
+// GetEpochLength returns the epoch length from state.
+func (k *Keeper) GetEpochLength(ctx context.Context) (uint64, error) {
+	return k.epochLength.Get(ctx)
+}
+
+// setEpochLength saves the epoch length to state.
+func (k *Keeper) setEpochLength(ctx context.Context, epochLength uint64) error {
+	return k.epochLength.Set(ctx, epochLength)
+}
 
 // GetHookAddress returns the hook address from state.
 func (k *Keeper) GetHookAddress(ctx context.Context) (common.Address, error) {
@@ -46,14 +58,16 @@ func (k *Keeper) setHookAddress(ctx context.Context, hookAddress common.Address)
 	return k.hookAddress.Set(ctx, hookAddress.Bytes())
 }
 
-// GetEpochLength returns the epoch length from state.
-func (k *Keeper) GetEpochLength(ctx context.Context) (uint64, error) {
-	return k.epochLength.Get(ctx)
-}
+// GetEnrolledValidators returns the enrolled validators from state.
+func (k *Keeper) GetEnrolledValidators(ctx context.Context) ([]string, error) {
+	var enrolledValidators []string
 
-// setEpochLength saves the epoch length to state.
-func (k *Keeper) setEpochLength(ctx context.Context, length uint64) error {
-	return k.epochLength.Set(ctx, length)
+	err := k.enrolledValidators.Walk(ctx, nil, func(rawEnrolledValidator []byte) (stop bool, err error) {
+		enrolledValidators = append(enrolledValidators, strings.ToUpper(hex.EncodeToString(rawEnrolledValidator)))
+		return false, nil
+	})
+
+	return enrolledValidators, err
 }
 
 // GetPendingEpoch returns the currently pending epoch from state.

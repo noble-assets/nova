@@ -66,6 +66,7 @@ message QueryConfig {}
 message QueryConfigResponse {
   uint64 epoch_length = 1;
   string hook_address = 2;
+  repeated string enrolled_validators = 3;
 }
 
 message QueryFinalizedEpochs {

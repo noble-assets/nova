@@ -22,6 +22,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/hex"
 
 	"cosmossdk.io/errors"
 	"github.com/ethereum/go-ethereum/common"
@@ -88,5 +89,38 @@ func (s msgServer) SetHookAddress(ctx context.Context, msg *types.MsgSetHookAddr
 	return &types.MsgSetHookAddressResponse{}, s.eventService.EventManager(ctx).Emit(ctx, &types.HookAddressSet{
 		OldHookAddress: oldHookAddress.String(),
 		NewHookAddress: msg.HookAddress,
+	})
+}
+
+func (s msgServer) SetEnrolledValidators(ctx context.Context, msg *types.MsgSetEnrolledValidators) (*types.MsgSetEnrolledValidatorsResponse, error) {
+	if msg.Signer != s.authority {
+		return nil, errors.Wrapf(types.ErrInvalidAuthority, "expected %s, got %s", s.authority, msg.Signer)
+	}
+
+	oldEnrolledValidators, err := s.GetEnrolledValidators(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get current enrolled validators from state")
+	}
+
+	err = s.enrolledValidators.Clear(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to clear old enrolled validators from state")
+	}
+
+	for _, enrolledValidator := range msg.EnrolledValidators {
+		bz, err := hex.DecodeString(enrolledValidator)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to decode enrolled validator %s", enrolledValidator)
+		}
+
+		err = s.enrolledValidators.Set(ctx, bz)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to set enrolled validator %s in state", enrolledValidator)
+		}
+	}
+
+	return &types.MsgSetEnrolledValidatorsResponse{}, s.eventService.EventManager(ctx).Emit(ctx, &types.EnrolledValidatorsSet{
+		OldEnrolledValidators: oldEnrolledValidators,
+		NewEnrolledValidators: msg.EnrolledValidators,
 	})
 }

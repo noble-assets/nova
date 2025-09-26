@@ -40,12 +40,13 @@ type Keeper struct {
 	logger       log.Logger
 	valStore     baseapp.ValidatorStore
 
-	hookAddress     collections.Item[[]byte]
-	epochLength     collections.Item[uint64]
-	pendingEpoch    collections.Item[types.Epoch]
-	finalizedEpochs collections.Map[uint64, types.Epoch]
-	stateRoots      collections.Map[uint64, []byte]
-	mailboxRoots    collections.Map[uint64, []byte]
+	epochLength        collections.Item[uint64]
+	hookAddress        collections.Item[[]byte]
+	enrolledValidators collections.KeySet[[]byte]
+	pendingEpoch       collections.Item[types.Epoch]
+	finalizedEpochs    collections.Map[uint64, types.Epoch]
+	stateRoots         collections.Map[uint64, []byte]
+	mailboxRoots       collections.Map[uint64, []byte]
 }
 
 func NewKeeper(authority string, cdc codec.BinaryCodec, storeService store.KVStoreService, eventService event.Service, logger log.Logger, rpcAddress string, valStore baseapp.ValidatorStore) *Keeper {
@@ -64,12 +65,13 @@ func NewKeeper(authority string, cdc codec.BinaryCodec, storeService store.KVSto
 		logger:       logger.With("module", types.ModuleName),
 		valStore:     valStore,
 
-		hookAddress:     collections.NewItem(builder, types.HookAddressKey, "hook_address", collections.BytesValue),
-		epochLength:     collections.NewItem(builder, types.EpochLengthKey, "epoch_length", collections.Uint64Value),
-		pendingEpoch:    collections.NewItem(builder, types.PendingEpochKey, "pending_epoch", codec.CollValue[types.Epoch](cdc)),
-		finalizedEpochs: collections.NewMap(builder, types.FinalizedEpochPrefix, "finalized_epochs", collections.Uint64Key, codec.CollValue[types.Epoch](cdc)),
-		stateRoots:      collections.NewMap(builder, types.StateRootPrefix, "state_roots", collections.Uint64Key, collections.BytesValue),
-		mailboxRoots:    collections.NewMap(builder, types.MailboxRootPrefix, "mailbox_roots", collections.Uint64Key, collections.BytesValue),
+		epochLength:        collections.NewItem(builder, types.EpochLengthKey, "epoch_length", collections.Uint64Value),
+		hookAddress:        collections.NewItem(builder, types.HookAddressKey, "hook_address", collections.BytesValue),
+		enrolledValidators: collections.NewKeySet(builder, types.EnrolledValidatorPrefix, "enrolled_validators", collections.BytesKey),
+		pendingEpoch:       collections.NewItem(builder, types.PendingEpochKey, "pending_epoch", codec.CollValue[types.Epoch](cdc)),
+		finalizedEpochs:    collections.NewMap(builder, types.FinalizedEpochPrefix, "finalized_epochs", collections.Uint64Key, codec.CollValue[types.Epoch](cdc)),
+		stateRoots:         collections.NewMap(builder, types.StateRootPrefix, "state_roots", collections.Uint64Key, collections.BytesValue),
+		mailboxRoots:       collections.NewMap(builder, types.MailboxRootPrefix, "mailbox_roots", collections.Uint64Key, collections.BytesValue),
 	}
 
 	_, err = builder.Build()

@@ -141,7 +141,7 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 			return nil, err
 		}
 
-		extension := computeVoteExtension(req.LocalLastCommit)
+		extension := k.computeVoteExtension(ctx, req.LocalLastCommit)
 		if extension == nil {
 			return res, nil
 		}
@@ -189,7 +189,7 @@ func (k *Keeper) ProcessProposalHandler(txConfig client.TxConfig) sdk.ProcessPro
 			return nil, err
 		}
 
-		extension := computeVoteExtension(injection.CommitInfo)
+		extension := k.computeVoteExtension(ctx, injection.CommitInfo)
 		if extension == nil {
 			return reject, nil
 		}
@@ -249,21 +249,31 @@ func (k *Keeper) PreBlockerHandler(txConfig client.TxConfig) sdk.PreBlocker {
 
 // ----- Utilities -----
 
-func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
+func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCommitInfo) *VoteExtension {
+	enrolledValidators, _ := k.GetEnrolledValidators(ctx)
+
 	var totalPower int64
 	tallies := make(map[string]int64)
 
 	var winner string
 	var winnerPower int64
 	for _, vote := range info.Votes {
-		totalPower += vote.Validator.Power
-
 		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit {
 			continue
 		}
 		if len(vote.VoteExtension) == 0 {
-			continue
+			// If there are enrolled validators, we check if this vote
+			// extension belongs to an enrolled validator, otherwise we skip
+			// them. If there are no enrolled validators, we default to all
+			// validators being enrolled.
+			if len(enrolledValidators) > 0 {
+				if has, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address); !has {
+					continue
+				}
+			}
 		}
+
+		totalPower += vote.Validator.Power
 
 		key := string(vote.VoteExtension)
 		tallies[key] += vote.Validator.Power

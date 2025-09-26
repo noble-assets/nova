@@ -22,6 +22,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/hex"
 
 	"cosmossdk.io/errors"
 	"github.com/ethereum/go-ethereum/common"
@@ -37,6 +38,18 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 	hookAddress := common.HexToAddress(genesis.Config.HookAddress)
 	if err := k.setHookAddress(ctx, hookAddress); err != nil {
 		panic(errors.Wrap(err, "failed to set genesis hook address"))
+	}
+
+	for _, enrolledValidator := range genesis.Config.EnrolledValidators {
+		bz, err := hex.DecodeString(enrolledValidator)
+		if err != nil {
+			panic(errors.Wrapf(err, "failed to decode enrolled validator %s", enrolledValidator))
+		}
+
+		err = k.enrolledValidators.Set(ctx, bz)
+		if err != nil {
+			panic(errors.Wrapf(err, "failed to set enrolled validator %s", enrolledValidator))
+		}
 	}
 
 	var pendingEpoch types.Epoch
@@ -79,9 +92,11 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
 	epochLength, _ := k.GetEpochLength(ctx)
 	hookAddress, _ := k.GetHookAddress(ctx)
+	enrolledValidators, _ := k.GetEnrolledValidators(ctx)
 	config := types.Config{
-		EpochLength: epochLength,
-		HookAddress: hookAddress.String(),
+		EpochLength:        epochLength,
+		HookAddress:        hookAddress.String(),
+		EnrolledValidators: enrolledValidators,
 	}
 
 	pendingEpoch, _ := k.GetPendingEpoch(ctx)
