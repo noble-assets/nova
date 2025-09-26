@@ -84,19 +84,40 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 }
 
 func (k *Keeper) ExportGenesis(ctx context.Context) *types.GenesisState {
-	epochLength, _ := k.GetEpochLength(ctx)
-	hookAddress, _ := k.GetHookAddress(ctx)
-	enrolledValidators, _ := k.GetEnrolledValidators(ctx)
+	epochLength, err := k.GetEpochLength(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get epoch length", "err", err)
+	}
+	hookAddress, err := k.GetHookAddress(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get hook address", "err", err)
+	}
+	enrolledValidators, err := k.GetEnrolledValidators(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get enrolled validators", "err", err)
+	}
 	config := types.Config{
 		EpochLength:        epochLength,
 		HookAddress:        hookAddress.String(),
 		EnrolledValidators: enrolledValidators,
 	}
 
-	pendingEpoch, _ := k.GetPendingEpoch(ctx)
-	finalizedEpochs, _ := k.getFinalizedEpochs(ctx)
-	stateRoots, _ := k.getStateRoots(ctx)
-	mailboxRoots, _ := k.getMailboxRoots(ctx)
+	pendingEpoch, err := k.GetPendingEpoch(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get pending epoch", "err", err)
+	}
+	finalizedEpochs, err := k.getFinalizedEpochs(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get finalized epochs", "err", err)
+	}
+	stateRoots, err := k.getStateRoots(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get state roots", "err", err)
+	}
+	mailboxRoots, err := k.getMailboxRoots(ctx)
+	if err != nil {
+		k.logger.Warn("unable to get mailbox roots", "err", err)
+	}
 
 	return &types.GenesisState{
 		Config:          config,
