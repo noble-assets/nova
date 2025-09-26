@@ -15,6 +15,7 @@ service Msg {
 
   rpc SetEpochLength(MsgSetEpochLength) returns (MsgSetEpochLengthResponse);
   rpc SetHookAddress(MsgSetHookAddress) returns (MsgSetHookAddressResponse);
+  rpc SetEnrolledValidators(MsgSetEnrolledValidators) returns (MsgSetEnrolledValidatorsResponse);
 }
 
 message Injection {
@@ -39,7 +40,7 @@ message MsgSetEpochLength {
 // MsgSetEpochLengthResponse is the response of the SetEpochLength message.
 message MsgSetEpochLengthResponse {}
 
-// MsgSetHookAddress allows the module authority to set the epoch length.
+// MsgSetHookAddress allows the module authority to set the hook address.
 message MsgSetHookAddress {
   option (cosmos.msg.v1.signer) = "signer";
   option (amino.name) = "nova/SetHookAddress";
@@ -53,3 +54,18 @@ message MsgSetHookAddress {
 
 // MsgSetHookAddressResponse is the response of the SetHookAddress message.
 message MsgSetHookAddressResponse {}
+
+// MsgSetEnrolledValidators allows the module authority to set the enrolled validators.
+message MsgSetEnrolledValidators {
+  option (cosmos.msg.v1.signer) = "signer";
+  option (amino.name) = "nova/SetEnrolledValidators";
+
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  repeated string enrolled_validators = 2;
+}
+
+// MsgSetEnrolledValidatorsResponse is the response of the SetEnrolledValidators message.
+message MsgSetEnrolledValidatorsResponse {}

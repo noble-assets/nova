@@ -31,7 +31,6 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/log"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -171,6 +170,14 @@ func (AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Set a new hook address (authority gated)",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "hook_address"}},
 				},
+				{
+					RpcMethod: "SetEnrolledValidators",
+					Use:       "set-enrolled-validators [enrolled-validators ...]",
+					Short:     "Set new enrolled validators (authority gated)",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "enrolled_validators", Varargs: true},
+					},
+				},
 			},
 			SubCommands: map[string]*autocliv1.ServiceCommandDescriptor{
 				"ism": {
@@ -282,11 +289,11 @@ type ModuleInputs struct {
 
 	Config *modulev1.Module
 
-	Codec          codec.Codec
-	StoreService   store.KVStoreService
-	EventService   event.Service
-	Logger         log.Logger
-	ValidatorStore baseapp.ValidatorStore
+	Codec         codec.Codec
+	StoreService  store.KVStoreService
+	EventService  event.Service
+	Logger        log.Logger
+	StakingKeeper types.StakingKeeper
 
 	HyperlaneKeeper ismtypes.HyperlaneKeeper
 
@@ -315,7 +322,7 @@ func ProvideModule(in ModuleInputs) ModuleOutputs {
 	}
 
 	authority := authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
-	k := keeper.NewKeeper(authority.String(), in.Codec, in.StoreService, in.EventService, in.Logger, rpcAddress, in.ValidatorStore)
+	k := keeper.NewKeeper(authority.String(), in.Codec, in.StoreService, in.EventService, in.Logger, rpcAddress, in.StakingKeeper)
 	ismKeeper := ismkeeper.NewKeeper(authority.String(), in.StoreService, in.EventService, in.Logger, k, in.HyperlaneKeeper)
 	m := NewAppModule(k, ismKeeper)
 

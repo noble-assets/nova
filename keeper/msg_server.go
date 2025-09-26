@@ -90,3 +90,31 @@ func (s msgServer) SetHookAddress(ctx context.Context, msg *types.MsgSetHookAddr
 		NewHookAddress: msg.HookAddress,
 	})
 }
+
+func (s msgServer) SetEnrolledValidators(ctx context.Context, msg *types.MsgSetEnrolledValidators) (*types.MsgSetEnrolledValidatorsResponse, error) {
+	if msg.Signer != s.authority {
+		return nil, errors.Wrapf(types.ErrInvalidAuthority, "expected %s, got %s", s.authority, msg.Signer)
+	}
+
+	oldEnrolledValidators, err := s.GetEnrolledValidators(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get current enrolled validators from state")
+	}
+
+	err = s.enrolledValidators.Clear(ctx, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to clear old enrolled validators from state")
+	}
+
+	for _, address := range msg.EnrolledValidators {
+		err := s.setEnrolledValidator(ctx, address)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &types.MsgSetEnrolledValidatorsResponse{}, s.eventService.EventManager(ctx).Emit(ctx, &types.EnrolledValidatorsSet{
+		OldEnrolledValidators: oldEnrolledValidators,
+		NewEnrolledValidators: msg.EnrolledValidators,
+	})
+}

@@ -21,33 +21,18 @@
 package types
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/ethereum/go-ethereum/common"
+	"cosmossdk.io/core/address"
+	"github.com/cosmos/cosmos-sdk/baseapp"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
-func DefaultGenesisState() *GenesisState {
-	return &GenesisState{
-		Config: Config{
-			EpochLength:        50, // 5 secs @ 100 ms AppLayer block time.
-			HookAddress:        common.Address{}.String(),
-			EnrolledValidators: []string{},
-		},
-	}
-}
+// StakingKeeper defines the interface of the x/staking Keeper.
+type StakingKeeper interface {
+	baseapp.ValidatorStore
 
-func (genesis *GenesisState) Validate() error {
-	if genesis.Config.EpochLength <= 0 {
-		return fmt.Errorf("invalid nova epoch length: %d", genesis.Config.EpochLength)
-	}
-
-	if valid := common.IsHexAddress(genesis.Config.HookAddress); !valid {
-		return fmt.Errorf("invalid nova hook address: %s", genesis.Config.HookAddress)
-	}
-
-	// TODO: Should we validate finalizedEpochs?
-
-	// TODO(stateRoots, mailboxRoots): go-ethereum doesn't provide a way of validating a hash
-
-	return nil
+	GetValidator(ctx context.Context, addr sdk.ValAddress) (validator stakingtypes.Validator, err error)
+	ValidatorAddressCodec() address.Codec
 }

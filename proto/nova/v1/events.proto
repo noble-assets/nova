@@ -29,3 +29,11 @@ message HookAddressSet {
   // new_hook_address defines the new hex-encoded hook address after the update.
   string new_hook_address = 2;
 }
+
+// EnrolledValidatorsSet is an event emitted whenever the module authority sets the enrolled validators.
+message EnrolledValidatorsSet {
+  // old_enrolled_validators defines the old enrolled validators before the update.
+  repeated string old_enrolled_validators = 1;
+  // new_enrolled_validators defines the new enrolled validators after the update.
+  repeated string new_enrolled_validators = 2;
+}

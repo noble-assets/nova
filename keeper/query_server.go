@@ -49,10 +49,15 @@ func (s queryServer) Config(ctx context.Context, req *types.QueryConfig) (*types
 	if err != nil {
 		return nil, err
 	}
+	enrolledValidators, err := s.Keeper.GetEnrolledValidators(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryConfigResponse{
-		EpochLength: epochLength,
-		HookAddress: hookAddress.String(),
+		EpochLength:        epochLength,
+		HookAddress:        hookAddress.String(),
+		EnrolledValidators: enrolledValidators,
 	}, nil
 }
 
