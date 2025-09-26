@@ -34,6 +34,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 	cdc.RegisterConcrete(&MsgSetEpochLength{}, "nova/SetEpochLength", nil)
 	cdc.RegisterConcrete(&MsgSetHookAddress{}, "nova/SetHookAddress", nil)
+	cdc.RegisterConcrete(&MsgSetEnrolledValidators{}, "nova/SetEnrolledValidators", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
@@ -42,6 +43,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil), &Injection{})
 	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEpochLength{})
 	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetHookAddress{})
+	registry.RegisterImplementations((*sdk.Msg)(nil), &MsgSetEnrolledValidators{})
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
