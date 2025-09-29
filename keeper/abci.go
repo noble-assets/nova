@@ -258,18 +258,19 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 	var winner string
 	var winnerPower int64
 	for _, vote := range info.Votes {
-		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit {
+		enrolled, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address)
+		// We still count enrolled validators even if they are offline.
+		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit && !enrolled {
 			continue
 		}
+
 		if len(vote.VoteExtension) == 0 {
 			// If there are enrolled validators, we check if this vote
 			// extension belongs to an enrolled validator, otherwise we skip
 			// them. If there are no enrolled validators, we default to all
 			// validators being enrolled.
-			if len(enrolledValidators) > 0 {
-				if has, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address); !has {
-					continue
-				}
+			if len(enrolledValidators) > 0 && !enrolled {
+				continue
 			}
 		}
 
