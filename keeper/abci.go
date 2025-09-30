@@ -251,6 +251,8 @@ func (k *Keeper) PreBlockerHandler(txConfig client.TxConfig) sdk.PreBlocker {
 
 func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCommitInfo) *VoteExtension {
 	enrolledValidators, _ := k.GetEnrolledValidators(ctx)
+	totalEnrolled := len(enrolledValidators)
+	var enrolledCount int
 
 	var totalPower int64
 	tallies := make(map[string]int64)
@@ -258,10 +260,13 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 	var winner string
 	var winnerPower int64
 	for _, vote := range info.Votes {
-		enrolled, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address)
-		// We still count enrolled validators even if they are offline.
-		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit && !enrolled {
+		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit {
 			continue
+		}
+
+		enrolled, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address)
+		if enrolled {
+			enrolledCount++
 		}
 
 		if len(vote.VoteExtension) == 0 {
@@ -269,7 +274,7 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 			// extension belongs to an enrolled validator, otherwise we skip
 			// them. If there are no enrolled validators, we default to all
 			// validators being enrolled.
-			if len(enrolledValidators) > 0 && !enrolled {
+			if totalEnrolled > 0 && !enrolled {
 				continue
 			}
 		}
@@ -286,6 +291,11 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 	}
 
 	if len(tallies) == 0 {
+		return nil
+	}
+
+	// We want to ensure that a majority of enrolled validators participated.
+	if totalEnrolled > 0 && !(enrolledCount*3 > totalEnrolled*2) {
 		return nil
 	}
 
