@@ -281,7 +281,7 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 
 		totalPower += vote.Validator.Power
 
-		key := string(vote.VoteExtension)
+		key := common.Bytes2Hex(vote.VoteExtension)
 		tallies[key] += vote.Validator.Power
 		newPower := tallies[key]
 		if newPower > winnerPower {
@@ -302,7 +302,7 @@ func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCom
 	// NOTE: This is equivalent to doing winnerPower/totalPower > 2/3
 	if winnerPower*3 > totalPower*2 {
 		var extension VoteExtension
-		if err := json.Unmarshal([]byte(winner), &extension); err != nil {
+		if err := json.Unmarshal(common.Hex2Bytes(winner), &extension); err != nil {
 			return nil
 		}
 
