@@ -25,11 +25,23 @@ import (
 	"errors"
 	"fmt"
 
+	sdkerrors "cosmossdk.io/errors"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/noble-assets/nova/types"
 )
+
+// GetEpochLength returns the epoch length from state.
+func (k *Keeper) GetEpochLength(ctx context.Context) (uint64, error) {
+	return k.epochLength.Get(ctx)
+}
+
+// setEpochLength saves the epoch length to state.
+func (k *Keeper) setEpochLength(ctx context.Context, epochLength uint64) error {
+	return k.epochLength.Set(ctx, epochLength)
+}
 
 // GetHookAddress returns the hook address from state.
 func (k *Keeper) GetHookAddress(ctx context.Context) (common.Address, error) {
@@ -46,14 +58,41 @@ func (k *Keeper) setHookAddress(ctx context.Context, hookAddress common.Address)
 	return k.hookAddress.Set(ctx, hookAddress.Bytes())
 }
 
-// GetEpochLength returns the epoch length from state.
-func (k *Keeper) GetEpochLength(ctx context.Context) (uint64, error) {
-	return k.epochLength.Get(ctx)
+// GetEnrolledValidators returns the enrolled validators from state.
+func (k *Keeper) GetEnrolledValidators(ctx context.Context) ([]string, error) {
+	var enrolledValidators []string
+
+	err := k.enrolledValidators.Walk(ctx, nil, func(_ []byte, enrolledValidator string) (stop bool, err error) {
+		enrolledValidators = append(enrolledValidators, enrolledValidator)
+		return false, nil
+	})
+
+	return enrolledValidators, err
 }
 
-// setEpochLength saves the epoch length to state.
-func (k *Keeper) setEpochLength(ctx context.Context, length uint64) error {
-	return k.epochLength.Set(ctx, length)
+// setEnrolledValidator saves an enrolled validator to state.
+func (k *Keeper) setEnrolledValidator(ctx context.Context, address string) error {
+	addressBz, err := k.stakingKeeper.ValidatorAddressCodec().StringToBytes(address)
+	if err != nil {
+		return sdkerrors.Wrapf(err, "unable to decode enrolled validator address %s", address)
+	}
+	validator, err := k.stakingKeeper.GetValidator(ctx, addressBz)
+	if err != nil {
+		return sdkerrors.Wrapf(err, "unable to get enrolled validator %s from state", address)
+	}
+
+	var pubKey cryptotypes.PubKey
+	err = k.codec.UnpackAny(validator.ConsensusPubkey, &pubKey)
+	if err != nil {
+		return sdkerrors.Wrapf(err, "unable to decode enrolled validator pubkey %s", address)
+	}
+
+	err = k.enrolledValidators.Set(ctx, pubKey.Address(), address)
+	if err != nil {
+		return sdkerrors.Wrapf(err, "unable to set enrolled validator %s in state", address)
+	}
+
+	return nil
 }
 
 // GetPendingEpoch returns the currently pending epoch from state.

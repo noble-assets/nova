@@ -136,12 +136,12 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 			return res, nil
 		}
 
-		err := baseapp.ValidateVoteExtensions(ctx, k.valStore, ctx.BlockHeight(), ctx.ChainID(), req.LocalLastCommit)
+		err := baseapp.ValidateVoteExtensions(ctx, k.stakingKeeper, ctx.BlockHeight(), ctx.ChainID(), req.LocalLastCommit)
 		if err != nil {
 			return nil, err
 		}
 
-		extension := computeVoteExtension(req.LocalLastCommit)
+		extension := k.computeVoteExtension(ctx, req.LocalLastCommit)
 		if extension == nil {
 			return res, nil
 		}
@@ -184,12 +184,12 @@ func (k *Keeper) ProcessProposalHandler(txConfig client.TxConfig) sdk.ProcessPro
 			return accept, nil
 		}
 
-		err := baseapp.ValidateVoteExtensions(ctx, k.valStore, ctx.BlockHeight(), ctx.ChainID(), injection.CommitInfo)
+		err := baseapp.ValidateVoteExtensions(ctx, k.stakingKeeper, ctx.BlockHeight(), ctx.ChainID(), injection.CommitInfo)
 		if err != nil {
 			return nil, err
 		}
 
-		extension := computeVoteExtension(injection.CommitInfo)
+		extension := k.computeVoteExtension(ctx, injection.CommitInfo)
 		if extension == nil {
 			return reject, nil
 		}
@@ -249,23 +249,39 @@ func (k *Keeper) PreBlockerHandler(txConfig client.TxConfig) sdk.PreBlocker {
 
 // ----- Utilities -----
 
-func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
+func (k *Keeper) computeVoteExtension(ctx context.Context, info abci.ExtendedCommitInfo) *VoteExtension {
+	enrolledValidators, _ := k.GetEnrolledValidators(ctx)
+	totalEnrolled := len(enrolledValidators)
+	var enrolledCount int
+
 	var totalPower int64
 	tallies := make(map[string]int64)
 
 	var winner string
 	var winnerPower int64
 	for _, vote := range info.Votes {
-		totalPower += vote.Validator.Power
-
 		if vote.BlockIdFlag != cmtproto.BlockIDFlagCommit {
 			continue
 		}
-		if len(vote.VoteExtension) == 0 {
-			continue
+
+		enrolled, _ := k.enrolledValidators.Has(ctx, vote.Validator.Address)
+		if enrolled {
+			enrolledCount++
 		}
 
-		key := string(vote.VoteExtension)
+		if len(vote.VoteExtension) == 0 {
+			// If there are enrolled validators, we check if this vote
+			// extension belongs to an enrolled validator, otherwise we skip
+			// them. If there are no enrolled validators, we default to all
+			// validators being enrolled.
+			if totalEnrolled > 0 && !enrolled {
+				continue
+			}
+		}
+
+		totalPower += vote.Validator.Power
+
+		key := common.Bytes2Hex(vote.VoteExtension)
 		tallies[key] += vote.Validator.Power
 		newPower := tallies[key]
 		if newPower > winnerPower {
@@ -278,10 +294,15 @@ func computeVoteExtension(info abci.ExtendedCommitInfo) *VoteExtension {
 		return nil
 	}
 
+	// We want to ensure that a majority of enrolled validators participated.
+	if totalEnrolled > 0 && !(enrolledCount*3 > totalEnrolled*2) {
+		return nil
+	}
+
 	// NOTE: This is equivalent to doing winnerPower/totalPower > 2/3
 	if winnerPower*3 > totalPower*2 {
 		var extension VoteExtension
-		if err := json.Unmarshal([]byte(winner), &extension); err != nil {
+		if err := json.Unmarshal(common.Hex2Bytes(winner), &extension); err != nil {
 			return nil
 		}
 

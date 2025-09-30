@@ -11,6 +11,11 @@ message Config {
   // hook_address defines the contract address of the Hyperlane Merkle Tree
   // Hook deployed on the Noble Applayer, used by the canonical mailbox.
   string hook_address = 2;
+
+  // enrolled_validators defines the validator addresses that are currently
+  // enrolled to finalize epochs. If empty, the full validator set is assumed
+  // to be enrolled.
+  repeated string enrolled_validators = 3;
 }
 
 message Epoch {

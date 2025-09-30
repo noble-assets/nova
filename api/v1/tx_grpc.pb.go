@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Msg_SetEpochLength_FullMethodName = "/nova.v1.Msg/SetEpochLength"
-	Msg_SetHookAddress_FullMethodName = "/nova.v1.Msg/SetHookAddress"
+	Msg_SetEpochLength_FullMethodName        = "/nova.v1.Msg/SetEpochLength"
+	Msg_SetHookAddress_FullMethodName        = "/nova.v1.Msg/SetHookAddress"
+	Msg_SetEnrolledValidators_FullMethodName = "/nova.v1.Msg/SetEnrolledValidators"
 )
 
 // MsgClient is the client API for Msg service.
@@ -29,6 +30,7 @@ const (
 type MsgClient interface {
 	SetEpochLength(ctx context.Context, in *MsgSetEpochLength, opts ...grpc.CallOption) (*MsgSetEpochLengthResponse, error)
 	SetHookAddress(ctx context.Context, in *MsgSetHookAddress, opts ...grpc.CallOption) (*MsgSetHookAddressResponse, error)
+	SetEnrolledValidators(ctx context.Context, in *MsgSetEnrolledValidators, opts ...grpc.CallOption) (*MsgSetEnrolledValidatorsResponse, error)
 }
 
 type msgClient struct {
@@ -59,12 +61,23 @@ func (c *msgClient) SetHookAddress(ctx context.Context, in *MsgSetHookAddress, o
 	return out, nil
 }
 
+func (c *msgClient) SetEnrolledValidators(ctx context.Context, in *MsgSetEnrolledValidators, opts ...grpc.CallOption) (*MsgSetEnrolledValidatorsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetEnrolledValidatorsResponse)
+	err := c.cc.Invoke(ctx, Msg_SetEnrolledValidators_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility.
 type MsgServer interface {
 	SetEpochLength(context.Context, *MsgSetEpochLength) (*MsgSetEpochLengthResponse, error)
 	SetHookAddress(context.Context, *MsgSetHookAddress) (*MsgSetHookAddressResponse, error)
+	SetEnrolledValidators(context.Context, *MsgSetEnrolledValidators) (*MsgSetEnrolledValidatorsResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedMsgServer) SetEpochLength(context.Context, *MsgSetEpochLength
 }
 func (UnimplementedMsgServer) SetHookAddress(context.Context, *MsgSetHookAddress) (*MsgSetHookAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetHookAddress not implemented")
+}
+func (UnimplementedMsgServer) SetEnrolledValidators(context.Context, *MsgSetEnrolledValidators) (*MsgSetEnrolledValidatorsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetEnrolledValidators not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 func (UnimplementedMsgServer) testEmbeddedByValue()             {}
@@ -138,6 +154,24 @@ func _Msg_SetHookAddress_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_SetEnrolledValidators_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetEnrolledValidators)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetEnrolledValidators(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetEnrolledValidators_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetEnrolledValidators(ctx, req.(*MsgSetEnrolledValidators))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetHookAddress",
 			Handler:    _Msg_SetHookAddress_Handler,
+		},
+		{
+			MethodName: "SetEnrolledValidators",
+			Handler:    _Msg_SetEnrolledValidators_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
