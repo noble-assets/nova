@@ -44,7 +44,7 @@ func (s msgServer) SetEpochLength(ctx context.Context, msg *types.MsgSetEpochLen
 		return nil, errors.Wrapf(types.ErrInvalidAuthority, "expected %s, got %s", s.authority, msg.Signer)
 	}
 
-	if msg.EpochLength <= 0 {
+	if msg.EpochLength == 0 {
 		return nil, errors.Wrap(types.ErrInvalidRequest, "invalid epoch length")
 	}
 
