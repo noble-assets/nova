@@ -20,9 +20,10 @@ service Msg {
 
 message Injection {
   uint64 epoch_number = 1;
-  string state_root = 2;
-  string mailbox_root = 3;
-  tendermint.abci.ExtendedCommitInfo commit_info = 4 [(gogoproto.nullable) = false];
+  uint64 end_height = 2;
+  string state_root = 3;
+  string mailbox_root = 4;
+  tendermint.abci.ExtendedCommitInfo commit_info = 5 [(gogoproto.nullable) = false];
 }
 
 // MsgSetEpochLength allows the module authority to set the epoch length.

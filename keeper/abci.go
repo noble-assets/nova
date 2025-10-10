@@ -45,6 +45,7 @@ import (
 
 type VoteExtensionNova struct {
 	EpochNumber uint64      `json:"epoch_number"`
+	EndHeight   uint64      `json:"end_height"`
 	StateRoot   common.Hash `json:"state_root"`
 	MailboxRoot common.Hash `json:"mailbox_root"`
 }
@@ -108,6 +109,7 @@ func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandl
 		bz, err := json.Marshal(VoteExtension{
 			Nova: VoteExtensionNova{
 				EpochNumber: epoch.Number,
+				EndHeight:   epoch.EndHeight,
 				StateRoot:   stateRoot,
 				MailboxRoot: mailboxRoot,
 			},
@@ -116,7 +118,7 @@ func (k *Keeper) ExtendVoteHandler(txConfig client.TxConfig) sdk.ExtendVoteHandl
 			return nil, err
 		}
 
-		k.logger.Info(fmt.Sprintf("extending vote for epoch %d", epoch.Number), "stateRoot", stateRoot, "mailboxRoot", common.Hash(mailboxRoot), "height", req.Height)
+		k.logger.Info(fmt.Sprintf("extending vote for epoch %d (applayer height: %d)", epoch.Number, epoch.EndHeight), "stateRoot", stateRoot, "mailboxRoot", common.Hash(mailboxRoot), "height", req.Height)
 
 		return &abci.ResponseExtendVote{
 			VoteExtension: bz,
@@ -149,6 +151,7 @@ func (k *Keeper) PrepareProposalHandler(txConfig client.TxConfig) sdk.PreparePro
 		builder := txConfig.NewTxBuilder()
 		err = builder.SetMsgs(&types.Injection{
 			EpochNumber: extension.Nova.EpochNumber,
+			EndHeight:   extension.Nova.EndHeight,
 			StateRoot:   extension.Nova.StateRoot.String(),
 			MailboxRoot: extension.Nova.MailboxRoot.String(),
 			CommitInfo:  req.LocalLastCommit,
@@ -197,6 +200,9 @@ func (k *Keeper) ProcessProposalHandler(txConfig client.TxConfig) sdk.ProcessPro
 		if injection.EpochNumber != extension.Nova.EpochNumber {
 			return reject, nil
 		}
+		if injection.EndHeight != extension.Nova.EndHeight {
+			return reject, nil
+		}
 		if !bytes.Equal(common.HexToHash(injection.StateRoot).Bytes(), extension.Nova.StateRoot.Bytes()) {
 			return reject, nil
 		}
@@ -223,7 +229,7 @@ func (k *Keeper) PreBlockerHandler(txConfig client.TxConfig) sdk.PreBlocker {
 			stateRoot := common.HexToHash(injection.StateRoot)
 			mailboxRoot := common.HexToHash(injection.MailboxRoot)
 
-			err := k.startNewEpoch(ctx, stateRoot, mailboxRoot)
+			err := k.startNewEpoch(ctx, injection.EndHeight, stateRoot, mailboxRoot)
 			if err != nil {
 				// If we fail to start a new epoch, we simply log the error as we want block production to continue.
 				k.logger.Error("failed to start new epoch", "err", err)
