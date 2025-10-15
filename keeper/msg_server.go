@@ -62,6 +62,7 @@ func (s msgServer) SetEpochLength(ctx context.Context, msg *types.MsgSetEpochLen
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get pending epoch from state")
 	}
+	oldEndHeight := pendingEpoch.EndHeight
 	pendingEpoch.EndHeight = pendingEpoch.StartHeight + msg.EpochLength
 	err = s.setPendingEpoch(ctx, pendingEpoch)
 	if err != nil {
@@ -71,6 +72,8 @@ func (s msgServer) SetEpochLength(ctx context.Context, msg *types.MsgSetEpochLen
 	return &types.MsgSetEpochLengthResponse{}, s.eventService.EventManager(ctx).Emit(ctx, &types.EpochLengthSet{
 		OldEpochLength: oldEpochLength,
 		NewEpochLength: msg.EpochLength,
+		OldEndHeight:   oldEndHeight,
+		NewEndHeight:   pendingEpoch.EndHeight,
 	})
 }
 
