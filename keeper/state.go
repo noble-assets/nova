@@ -166,11 +166,15 @@ func (k *Keeper) setFinalizedEpoch(ctx context.Context, epoch types.Epoch) error
 
 // startNewEpoch is a utility that starts a new epoch, marking the currently
 // pending epoch as finalized given a state root and mailbox root.
-func (k *Keeper) startNewEpoch(ctx context.Context, stateRoot common.Hash, mailboxRoot common.Hash) error {
+func (k *Keeper) startNewEpoch(ctx context.Context, endHeight uint64, stateRoot common.Hash, mailboxRoot common.Hash) error {
 	pendingEpoch, err := k.GetPendingEpoch(ctx)
 	if err != nil {
 		return err
 	}
+	if pendingEpoch.EndHeight != endHeight {
+		return fmt.Errorf("stored end height (%d) != provided end height (%d)", pendingEpoch.EndHeight, endHeight)
+	}
+
 	epochLength, err := k.GetEpochLength(ctx)
 	if err != nil {
 		return err
