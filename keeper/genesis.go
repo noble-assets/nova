@@ -39,6 +39,9 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 		panic(errors.Wrap(err, "failed to set genesis hook address"))
 	}
 
+	if err := k.enrolledValidators.Clear(ctx, nil); err != nil {
+		panic(errors.Wrap(err, "failed to clear enrolled validators"))
+	}
 	for _, address := range genesis.Config.EnrolledValidators {
 		err := k.setEnrolledValidator(ctx, address)
 		if err != nil {
@@ -60,12 +63,18 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 		panic(errors.Wrap(err, "failed to set genesis pending epoch"))
 	}
 
+	if err := k.finalizedEpochs.Clear(ctx, nil); err != nil {
+		panic(errors.Wrap(err, "failed to clear finalized epochs"))
+	}
 	for _, finalizedEpoch := range genesis.FinalizedEpochs {
 		if err := k.setFinalizedEpoch(ctx, finalizedEpoch); err != nil {
 			panic(errors.Wrapf(err, "failed to set genesis finalized epoch %d", finalizedEpoch.Number))
 		}
 	}
 
+	if err := k.stateRoots.Clear(ctx, nil); err != nil {
+		panic(errors.Wrap(err, "failed to clear state roots"))
+	}
 	for epochNumber, rawStateRoot := range genesis.StateRoots {
 		stateRoot := common.HexToHash(rawStateRoot)
 
@@ -74,6 +83,9 @@ func (k *Keeper) InitGenesis(ctx context.Context, genesis types.GenesisState) {
 		}
 	}
 
+	if err := k.mailboxRoots.Clear(ctx, nil); err != nil {
+		panic(errors.Wrap(err, "failed to clear mailbox roots"))
+	}
 	for epochNumber, rawMailboxRoot := range genesis.MailboxRoots {
 		mailboxRoot := common.HexToHash(rawMailboxRoot)
 
